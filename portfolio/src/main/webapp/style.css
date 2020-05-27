@@ -41,7 +41,7 @@ h1  {
 }
 
 .tab:hover {
-    padding-top: 35px;
+    padding-top: 37px;
 }
 
 
@@ -111,7 +111,7 @@ body {
     height: 40px;
 }
 
-#slideshow-container, #slideshow-container-container {
+#slideshow-container {
     display: block;
     width: 300px;
     height: 400px;
@@ -120,11 +120,29 @@ body {
 #slideshow-container-container {
     display:flex;
     align-items:center;
-    margin: auto;
+    justify-content:center;
 }
 
 .arrow {
     height: 40px;
     width: 25px;
     margin: 10px;
+}
+
+.title-arrow {
+    height: 12px;
+    width: 8px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+#slides-title-container {
+    display: flex;
+    align-items:center;
+    justify-content: center;
+}
+
+#slides-title {
+    text-align: center;
+    width: 200px;
 }

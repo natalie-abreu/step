@@ -38,10 +38,13 @@
             </p>
         </div>
         <div id="pictures-div" class="contentdiv">
-            <p class="pictures contentp">Click for a slideshow:</p>
-            <p id="b" class="pictures contentp" onclick="renderSlides(this.id, 0)">Baking</p>
-            <p id="p" class="pictures contentp" onclick="renderSlides(this.id, 0)">Places</p>
-            <p id="m" class="pictures contentp" onclick="renderSlides(this.id, 0)">Me and Other People</p>
+            <div id="slides-title-container">
+                <img class="arrow title-arrow" src='/images/prev.png' alt='prev' onclick="changeShow(-1)">
+                <div id="slides-title" class ="pictures">
+                    <p>Baking</p>
+                </div>
+                <img class="arrow title-arrow" src='/images/next.png' alt='next' onclick="changeShow(1)">
+            </div>
             <div id="slideshow-container-container">
                 <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
                 <div id="slideshow-container">

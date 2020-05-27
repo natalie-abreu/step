@@ -28,14 +28,11 @@ function addRandomGreeting() {
 }
 
 function switchPage(id) {
-    // const activeTab = document.getElementById(id);
     const allContent = document.getElementsByClassName("contentdiv");
     for (item of allContent) {
         item.style.display = "none";
-        console.log(item.id)   
      }
     const res = id.split("-");
-    console.log(res[0]+"-div")
     const activeText = document.getElementById(res[0]+"-div");
     activeText.style.display = "block";
 }
@@ -47,7 +44,6 @@ for (i = 1; i <=5; i++) {
 }
 function renderSlides(show) {
     imgs = [];
-    console.log(show);
     show_name = show;
     for (i = 1; i <=5; i++) {
         imgs.push("/images/"+show+i+".jpg")
@@ -68,7 +64,6 @@ function renderSlides(show) {
 }
 
 function changeSlides(dir) {
-    console.log("SHOW" + show_name)
     if (dir == 0) {
         slideIndex = 0;
     }
@@ -84,4 +79,27 @@ function changeSlides(dir) {
     const slideImage = document.getElementById('slide-img');
     slideImage.src = imgs[slideIndex];
 
+}
+
+const options =["Baking", "Places", "Me and Other People"];
+const show_ids = ["b", "p", "m"]
+console.log("testing: " + options[0][0].toLowerCase());
+let showIndex = 0;
+function changeShow(dir) {
+    if (dir == 0) {
+        showIndex = 0;
+    }
+    else if (showIndex == 0 && dir == -1) {
+        showIndex = options.length-1;
+    }
+    else if (showIndex == options.length-1 && dir == 1) {
+        showIndex = 0;
+    }
+    else {
+        showIndex+=dir;
+    }
+    show_name = options[showIndex][0].toLowerCase();
+    const slidesTitle = document.getElementById('slides-title');
+    slidesTitle.innerHTML = options[showIndex];
+    renderSlides(show_name, 0);
 }
