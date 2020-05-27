@@ -2,33 +2,56 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
+    <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   </head>
   <body>
     <div id="header">
-        <h1>Natalie's Portfolio</h1>
+        <h1>Hi!</h1>
         <div id="tabs">
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
-            <p id="contact-tab" class="tab" onclick="switchPage(this.id)">Contact</p>
+            <p id="otherthings-tab" class="tab" onclick="switchPage(this.id)">Other Things</p>
         </div>
     </div>
     <div id="content">
         <div id="aboutme-div" class="contentdiv">
+            <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
             <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
-            I'm originally from Chicago, IL, which is where I am currently working from.</p>
+            I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
+            <div id="links">
+                <a href="https://www.linkedin.com/in/natalie-abreu/" class="fa fa-linkedin"></a>
+                <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+            </div>
         </div>
         <div id="projects-div" class="contentdiv">
-            <p id="projects" class="contentp">Here are some projects I've worked on during my first year at USC:</p>
+            <p id="projects" class="contentp">
+            PlusMe Project:<br><br>Through a student-org I am in called Code the Change, I worked on a web dev project featuring an interactive journal 
+            to aid students with college application process as part of the PLUS ME Project, using React, Express, Node.js, and Postgres.
+            <br><br>gsec:<br><br>Through another student-org I am in, CAIS++, I worked on a group project to create a generalized classifier for genomic data
+             in collaboration with the Smith Computational Genomics Lab.
+            <br><br>Research Lab:<br><br>I also worked in a research lab where I studied ML and RL techniques with the goal of modeling human-inspired multirobot coordination.
+            </p>
         </div>
+        <div id="otherthings-div" class="contentdiv">
+            <p id="b" class="otherthings contentp" onclick="renderSlides(this.id, 0)">Slideshow #1</p>
+            <p id="p" class="otherthings contentp" onclick="renderSlides(this.id, 0)">Slideshow #2</p>
+            <p class="otherthings contentp">Slideshow #3</p>
+            <div id="slideshow-container-container">
+                <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
+                <div id="slideshow-container">
+                </div>
+                <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
+            </div>
+        </div>
+
       <!-- <p>Click here to get a random message:</p> -->
       <!-- <button onclick="addRandomGreeting()">Hello</button>
       <div id="greeting-container"></div> -->
-      <!-- <img alt="profile picture" src='/images/profileimg_cropped.png'> -->
 
     </div>
   </body>

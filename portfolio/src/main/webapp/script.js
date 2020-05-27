@@ -39,3 +39,48 @@ function switchPage(id) {
     const activeText = document.getElementById(res[0]+"-div");
     activeText.style.display = "block";
 }
+let slideIndex = 0;
+let show_name;
+let imgs = []
+function renderSlides(show) {
+    imgs = [];
+    console.log(show);
+    show_name = show;
+    for (i = 1; i <=5; i++) {
+        imgs.push("/images/"+show+i+".jpg")
+    }
+    let w = '300px';
+    let h = '400px';
+    if (show == 'p') {
+        [w, h] = [h, w];
+    }
+    const slideshowArea = document.getElementById("slideshow-container-container");
+    slideshowArea.style.display = "flex";
+    // slideshowArea.style.width = w;
+    // slideshowArea.style.height = h;
+    const container = document.getElementById('slideshow-container');
+    container.style.display = "block";
+    container.style.width = w;
+    container.style.height = h;
+    container.innerHTML = `<div class='slides' style='display:block'> 
+    <img id='slide-img' src=${imgs[0]} style='width:${w}; height:${h}; object-fit: cover;'>`
+}
+
+function changeSlides(dir) {
+    console.log("SHOW" + show_name)
+    if (dir == 0) {
+        slideIndex = 0;
+    }
+    else if (slideIndex == 0 && dir == -1) {
+        slideIndex = imgs.length-1;
+    }
+    else if (slideIndex == imgs.length-1 && dir == 1) {
+        slideIndex = 0;
+    }
+    else {
+        slideIndex+=dir;
+    }
+    const slideImage = document.getElementById('slide-img');
+    slideImage.src = imgs[slideIndex];
+
+}
