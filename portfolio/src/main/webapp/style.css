@@ -21,6 +21,7 @@
 }
 
 h1  {
+    margin-left: 10px;
     padding-top: 40px;
     text-align: left;
 }
@@ -34,8 +35,8 @@ h1  {
 
 .tab {
     padding-top: 40px;
-    margin-right: 20px;
-    margin-left: 5px;
+    margin-right: 15px;
+    margin-left: 10px;
     cursor: auto;
 }
 
@@ -66,9 +67,9 @@ body {
 
 
 #profileimg {
-    height: 100px;
-    width: 100px;
-    border-radius: 50px;
+    height: 120px;
+    width: 120px;
+    border-radius: 60px;
     margin-right: 10px;
     float: left;
 }
@@ -111,13 +112,15 @@ body {
 }
 
 #slideshow-container, #slideshow-container-container {
+    display: block;
     width: 300px;
     height: 400px;
-    display: none;
 }
 
 #slideshow-container-container {
+    display:flex;
     align-items:center;
+    margin: auto;
 }
 
 .arrow {

@@ -40,8 +40,11 @@ function switchPage(id) {
     activeText.style.display = "block";
 }
 let slideIndex = 0;
-let show_name;
+let show_name = 'b';
 let imgs = []
+for (i = 1; i <=5; i++) {
+        imgs.push("/images/"+show_name+i+".jpg")
+}
 function renderSlides(show) {
     imgs = [];
     console.log(show);
@@ -56,8 +59,6 @@ function renderSlides(show) {
     }
     const slideshowArea = document.getElementById("slideshow-container-container");
     slideshowArea.style.display = "flex";
-    // slideshowArea.style.width = w;
-    // slideshowArea.style.height = h;
     const container = document.getElementById('slideshow-container');
     container.style.display = "block";
     container.style.width = w;

@@ -15,7 +15,7 @@
         <div id="tabs">
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
-            <p id="otherthings-tab" class="tab" onclick="switchPage(this.id)">Other Things</p>
+            <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
         </div>
     </div>
     <div id="content">
@@ -37,13 +37,17 @@
             <br><br>Research Lab:<br><br>I also worked in a research lab where I studied ML and RL techniques with the goal of modeling human-inspired multirobot coordination.
             </p>
         </div>
-        <div id="otherthings-div" class="contentdiv">
-            <p id="b" class="otherthings contentp" onclick="renderSlides(this.id, 0)">Slideshow #1</p>
-            <p id="p" class="otherthings contentp" onclick="renderSlides(this.id, 0)">Slideshow #2</p>
-            <p class="otherthings contentp">Slideshow #3</p>
+        <div id="pictures-div" class="contentdiv">
+            <p class="pictures contentp">Click for a slideshow:</p>
+            <p id="b" class="pictures contentp" onclick="renderSlides(this.id, 0)">Baking</p>
+            <p id="p" class="pictures contentp" onclick="renderSlides(this.id, 0)">Places</p>
+            <p id="m" class="pictures contentp" onclick="renderSlides(this.id, 0)">Me and Other People</p>
             <div id="slideshow-container-container">
                 <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
                 <div id="slideshow-container">
+                    <div class='slides' style='display:block'> 
+                        <img id='slide-img' src='/images/b1.jpg' style='width:300px; height:400px; object-fit: cover;'>
+                    </div>
                 </div>
                 <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
             </div>
