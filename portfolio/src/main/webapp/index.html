@@ -12,17 +12,24 @@
     <div id="header">
         <h1>Natalie's Portfolio</h1>
         <div id="tabs">
-            <p class="tab">About Me</p>
-            <p class="tab">Projects</p>
-            <p class="tab">Contact</p>
+            <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
+            <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
+            <p id="contact-tab" class="tab" onclick="switchPage(this.id)">Contact</p>
         </div>
     </div>
     <div id="content">
-      <p>Hi, I'm Natalie. This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+        <div id="aboutme-div" class="contentdiv">
+            <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
+            I'm originally from Chicago, IL, which is where I am currently working from.</p>
+        </div>
+        <div id="projects-div" class="contentdiv">
+            <p id="projects" class="contentp">Here are some projects I've worked on during my first year at USC:</p>
+        </div>
+      <!-- <p>Click here to get a random message:</p> -->
+      <!-- <button onclick="addRandomGreeting()">Hello</button>
+      <div id="greeting-container"></div> -->
       <!-- <img alt="profile picture" src='/images/profileimg_cropped.png'> -->
+
     </div>
   </body>
 </html>

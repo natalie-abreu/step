@@ -26,3 +26,16 @@ function addRandomGreeting() {
   const greetingContainer = document.getElementById('greeting-container');
   greetingContainer.innerText = greeting;
 }
+
+function switchPage(id) {
+    // const activeTab = document.getElementById(id);
+    const allContent = document.getElementsByClassName("contentdiv");
+    for (item of allContent) {
+        item.style.display = "none";
+        console.log(item.id)   
+     }
+    const res = id.split("-");
+    console.log(res[0]+"-div")
+    const activeText = document.getElementById(res[0]+"-div");
+    activeText.style.display = "block";
+}
