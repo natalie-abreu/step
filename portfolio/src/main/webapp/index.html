@@ -5,14 +5,24 @@
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+
   </head>
   <body>
+    <div id="header">
+        <h1>Natalie's Portfolio</h1>
+        <div id="tabs">
+            <p class="tab">About Me</p>
+            <p class="tab">Projects</p>
+            <p class="tab">Contact</p>
+        </div>
+    </div>
     <div id="content">
-      <h1>Natalie's Portfolio</h1>
       <p>Hi, I'm Natalie. This is my portfolio.</p>
       <p>Click here to get a random message:</p>
       <button onclick="addRandomGreeting()">Hello</button>
       <div id="greeting-container"></div>
+      <!-- <img alt="profile picture" src='/images/profileimg_cropped.png'> -->
     </div>
   </body>
 </html>
