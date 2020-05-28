@@ -27,6 +27,7 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
+// switch page when header tab is clicked
 function switchPage(id) {
     const allContent = document.getElementsByClassName("contentdiv");
     for (item of allContent) {
@@ -36,15 +37,18 @@ function switchPage(id) {
     const activeText = document.getElementById(res[0]+"-div");
     activeText.style.display = "block";
 }
+
+// js for templated slideshows
 let slideIndex = 0;
-let show_name = 'b';
+let show_title = 'b';
 let imgs = []
 for (i = 1; i <=5; i++) {
-        imgs.push("/images/"+show_name+i+".jpg")
+        imgs.push("/images/"+show_title+i+".jpg")
 }
+
 function renderSlides(show) {
     imgs = [];
-    show_name = show;
+    show_title = show;
     for (i = 1; i <=5; i++) {
         imgs.push("/images/"+show+i+".jpg")
     }
@@ -82,8 +86,6 @@ function changeSlides(dir) {
 }
 
 const options =["Baking", "Places", "Me and Other People"];
-const show_ids = ["b", "p", "m"]
-console.log("testing: " + options[0][0].toLowerCase());
 let showIndex = 0;
 function changeShow(dir) {
     if (dir == 0) {
@@ -98,8 +100,52 @@ function changeShow(dir) {
     else {
         showIndex+=dir;
     }
-    show_name = options[showIndex][0].toLowerCase();
+    show_title = options[showIndex][0].toLowerCase();
     const slidesTitle = document.getElementById('slides-title');
     slidesTitle.innerHTML = options[showIndex];
-    renderSlides(show_name, 0);
+    renderSlides(show_title, 0);
+}
+
+function toggleProjectOn(id) {
+    descriptions = [`Through a student-org I am in called Code the Change, I worked on a web dev project featuring an interactive journal 
+            to aid students with college application process as part of the PLUS ME Project, using React, Express, Node.js, and Postgres.`,
+            `Through another student-org I am in, CAIS++, I worked on a group project to create a generalized classifier for genomic data.`,
+            `This was my project for Google CSSI last summer that used the Google Maps API to find restaurants in the user's area based on user food preferences.`,
+            `I worked in a research lab at USC where I studied ML and RL techniques with the goal of modeling human-inspired multirobot coordination.`]
+    
+    const ind = id.split("-")[1]-1;
+    const img = id.split("-")[0]+"-img";
+
+    // don't have an image for research square
+    if (img != "research-img") {
+        const background = document.getElementById(img);
+        background.style.display = "none";
+    }
+
+    const square = document.getElementById(id);
+    square.innerHTML = descriptions[ind];
+    square.style.fontSize = "18px";
+    square.style.lineHeight = "18px";
+    square.style.paddingTop = "80px";
+    square.style.height = "220px";
+}
+
+function toggleProjectOff(id) {
+    titles = ["PlusMe Project", "gsec", "Todo Restaurants", "Research Lab"];
+
+    const ind = id.split("-")[1]-1;
+    const img = id.split("-")[0]+"-img";
+    
+    // don't have an image for research square
+    if (img != "research-img") {
+        const background = document.getElementById(img);
+        background.style.display = "block";
+    }
+    
+    const square = document.getElementById(id);
+    square.innerHTML=titles[ind];
+    square.style.fontSize = "30px";
+    square.style.lineHeight = "300px";
+    square.style.paddingTop = "0px";
+    square.style.height = "300px";
 }

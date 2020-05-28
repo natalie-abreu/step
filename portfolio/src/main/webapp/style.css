@@ -79,36 +79,33 @@ body {
 }
 
 
-.fa {
-  padding: 10px;
-  font-size: 50px;
-  width: 50px;
-  text-align: center;
-  text-decoration: none;
-}
-
-/* Add a hover effect if you want */
-.fa:hover, #github-icon:hover, #github-img:hover {
+#linkedin-icon:hover, #github-icon:hover, #github-img:hover {
   opacity: 0.7;
 }
 
-.fa-linkedin {
-    width: 20px;
-    height: 20px;
-    background: #007bb5;
-    color: white;
+#linkedin-icon {
+    width: 50px;
+    height: 40px;
+    background: transparent;
 }
 
+#linkedin-img {
+    width: 48px;
+    height: 40px;
+
+}
 #github-icon {
-    margin-left: 10px;
+    margin-left: 5px;
     width: 40px;
     height: 40px;
     background: black;
+    border-radius: 2px;
 }
 
 #github-img {
     width: 40px;
     height: 40px;
+    border-radius: 4px;
 }
 
 #slideshow-container {
@@ -145,4 +142,41 @@ body {
 #slides-title {
     text-align: center;
     width: 200px;
+}
+
+.projects-grid-item-div {
+    position: relative;
+    text-align: center;
+    height: 300px;
+    width: 400px;
+}
+.projects-img {
+    height: 300px;
+    width: 400px;
+}
+.projects-img-text {
+    height: 300px;
+    width: 400px;
+    background: rgb(0, 0, 0, .2);
+    text-align: center;
+    color: #EBF6FF;
+    font-size: 30px;
+    line-height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.projects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 800px;
+    margin: auto;
+}
+
+.project-description {
+    margin: auto;
+    font-size: 18px;
+    line-height: 18px;
 }

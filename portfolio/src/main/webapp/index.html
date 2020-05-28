@@ -16,6 +16,7 @@
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
             <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
+            <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects 2.0</p>
         </div>
     </div>
     <div id="content">
@@ -24,8 +25,32 @@
             <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
             I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
             <div id="links">
-                <a href="https://www.linkedin.com/in/natalie-abreu/" class="fa fa-linkedin"></a>
+                <a href="https://www.linkedin.com/in/natalie-abreu/"><div id="linkedin-icon"><img id="linkedin-img" src='/images/LI-In-Bug.png' alt="LinkedIn"></div></a>
                 <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+            </div>
+        </div>
+         <div id="projectsexp-div" class="contentdiv">
+             <div class="projects-grid">
+                <div class="projects-grid-item-div">
+                    <img id="ctc-img" class="projects-img" src="/images/ctc.JPG" alt="Code the Change & PlusMe Project">
+                    <div id="ctc-1" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">PlusMe Project</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cais-img" class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec">
+                    <div id="cais-2" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">gsec</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cssi-img" class="projects-img" src="/images/cssi.jpg" alt="CSSI & Todo Restaurants">
+                    <div id="cssi-3" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Todo Restaurants</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <!-- <img class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec"> -->
+                    <div id="research-4" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Research Lab</div>
+                </div>
             </div>
         </div>
         <div id="projects-div" class="contentdiv">
@@ -35,6 +60,7 @@
             <br><br>gsec:<br><br>Through another student-org I am in, CAIS++, I worked on a group project to create a generalized classifier for genomic data
              in collaboration with the Smith Computational Genomics Lab.
             <br><br>Research Lab:<br><br>I also worked in a research lab where I studied ML and RL techniques with the goal of modeling human-inspired multirobot coordination.
+            <br><br>Todo Restaurants:<br><br>This was my project for Google CSSI last summer that used the Google Maps API to find restaurants in the user's area based on user food preferences.
             </p>
         </div>
         <div id="pictures-div" class="contentdiv">
