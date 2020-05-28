@@ -128,6 +128,8 @@ function toggleProjectOn(id) {
     square.style.lineHeight = "18px";
     square.style.paddingTop = "80px";
     square.style.height = "220px";
+    square.style.background = "rgb(64, 78, 77, .6)";
+
 }
 
 function toggleProjectOff(id) {
@@ -148,4 +150,5 @@ function toggleProjectOff(id) {
     square.style.lineHeight = "300px";
     square.style.paddingTop = "0px";
     square.style.height = "300px";
+    square.style.background = "rgb(64, 78, 77, .3)";
 }

@@ -54,6 +54,7 @@ body {
 .contentdiv {
     display: none;
     padding-top: 20px;
+    margin-bottom: 20px;
 }
 
 #aboutme-div {
@@ -153,6 +154,7 @@ body {
 .projects-img {
     height: 300px;
     width: 400px;
+    
 }
 .projects-img-text {
     height: 300px;
