@@ -150,5 +150,5 @@ function toggleProjectOff(id) {
     square.style.lineHeight = "300px";
     square.style.paddingTop = "0px";
     square.style.height = "300px";
-    square.style.background = "rgb(64, 78, 77, .3)";
+    square.style.background = "rgb(64, 78, 77, .25)";
 }
