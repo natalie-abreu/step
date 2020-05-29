@@ -23,20 +23,6 @@ function initMap() {
 
     let geocoder = new google.maps.Geocoder();
 
-   var marker = new google.maps.Marker({
-    position: start,
-    map: map,
-    title: 'Start',
-    draggable: true
-    });
-
-   var marker = new google.maps.Marker({
-    position: end,
-    map: map,
-    title: 'End',
-    draggable: true
-    });
-
    
   var directionsService = new google.maps.DirectionsService;
   var directionsRenderer = new google.maps.DirectionsRenderer({
@@ -56,19 +42,15 @@ function initMap() {
 
     let path = [];
     
-
-
-    // make this work later
     function getPath(place_ids) {
         for (id of place_ids) {
             geocoder.geocode( { 'placeId': id}, function(results, status) {
                 if (status == 'OK') {
                     console.log(results[0].geometry.location)
                     res = results[0].geometry.location
-                    console.log(res.lat(), res.lng())
-                    console.log(res.toUrlValue())
+
                     path.push(res);
-                    console.log("intermediate path: " + path)    
+                    // this is not efficient but i don't know how to do it otherwise
                     displayPathElevation(path, elevator, map);
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
@@ -125,14 +107,7 @@ function computeTotalDistance(result) {
 google.load('visualization', '1', {packages: ['columnchart']});
 
 function displayPathElevation(path, elevator, map) {
-/*   // Display a polyline of the elevation path.
-  new google.maps.Polyline({
-    path: path,
-    strokeColor: '#0000CC',
-    strokeOpacity: 0.4,
-    map: map
-  });
-   */
+
   // Create a PathElevationRequest object using this array.
   // Ask for 256 samples along that path.
   // Initiate the path request.
