@@ -44,6 +44,7 @@ function initMap() {
     map: map,
     panel: document.getElementById('right-panel')
   });
+  var elevator = new google.maps.ElevationService;
 
   directionsRenderer.addListener('directions_changed', function() {
     computeTotalDistance(directionsRenderer.getDirections());
@@ -53,55 +54,41 @@ function initMap() {
         place_ids.push(pt["place_id"])
     }
 
-    let path;
-
-    async function getPath(place_ids, callback) {
-        path = "hello";
-        path = await pathCallback(place_ids[0])
-        // for (id of place_ids) {
-        //     path = await pathCallback(id);
-        // }
-        // await new Promise((resolve, reject) => setTimeout(resolve, 3000));
-        console.log("getPath Result " + path);
-        return Promise.resolve(path);
-        // return path;
-    }
-    async function pathCallback(id) {
-        let foo = await geocoder.geocode( { 'placeId': id}, async function(results, status) {
-            if (status == 'OK') {
-                console.log(results[0].geometry.location)
-                res = results[0].geometry.location
-                console.log(res.lat(), res.lng())
-                console.log(res.toUrlValue())
-                path+=(res.toUrlValue()+'|')
-                console.log("intermediate path: " + path)   
-                return new Promise(function(resolve, reject) {
-                    resolve(path);
-                });             
-            } else {
-                alert('Geocode was not successful for the following reason: ' + status);
-            }
-        });
-        console.log(foo)
-        // await new Promise((resolve, reject) => setTimeout(resolve, 3000));
-        console.log("other intermediate path: " + path)   
-        return new Promise(function(resolve, reject) {
-                    resolve(path);
-        });
-    }
-    path = getPath(place_ids, pathCallback);
+    let path = [];
     
+
+
+    // make this work later
+    function getPath(place_ids) {
+        for (id of place_ids) {
+            geocoder.geocode( { 'placeId': id}, function(results, status) {
+                if (status == 'OK') {
+                    console.log(results[0].geometry.location)
+                    res = results[0].geometry.location
+                    console.log(res.lat(), res.lng())
+                    console.log(res.toUrlValue())
+                    path.push(res);
+                    console.log("intermediate path: " + path)    
+                    displayPathElevation(path, elevator, map);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+          
+        }
+    }
+    getPath(place_ids);
     console.log("final path: " + path)
   });
+
 
   displayRoute('42.176498, -87.798125', '42.176135, -87.808397', directionsService,
       directionsRenderer);
   
-  var path = [
+  let path = [
       {lat: 42.176498, lng: -87.798125},  // Mt. Whitney
       {lat: 42.176135, lng: -87.808397}];  // Badwater, Death Valley
       
-  var elevator = new google.maps.ElevationService;
 
   // Draw the path, using the Visualization API and the Elevation service.
   displayPathElevation(path, elevator, map);
