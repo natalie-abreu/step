@@ -2,17 +2,94 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
+    <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
   </head>
   <body>
+    <div id="header">
+        <h1>Hi!</h1>
+        <div id="tabs">
+            <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
+            <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
+            <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
+            <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects 2.0</p>
+        </div>
+    </div>
     <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+        <div id="aboutme-div" class="contentdiv">
+            <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
+            <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
+            I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
+            <div id="links">
+                <a href="https://www.linkedin.com/in/natalie-abreu/"><div id="linkedin-icon"><img id="linkedin-img" src='/images/LI-In-Bug.png' alt="LinkedIn"></div></a>
+                <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+            </div>
+        </div>
+         <div id="projectsexp-div" class="contentdiv">
+             <div class="projects-grid">
+                <div class="projects-grid-item-div">
+                    <img id="ctc-img" class="projects-img" src="/images/ctc.JPG" alt="Code the Change & PlusMe Project">
+                    <div id="ctc-1" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">PlusMe Project</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cais-img" class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec">
+                    <div id="cais-2" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">gsec</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cssi-img" class="projects-img" src="/images/cssi.jpg" alt="CSSI & Todo Restaurants">
+                    <div id="cssi-3" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Todo Restaurants</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <!-- <img class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec"> -->
+                    <div id="research-4" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Research Lab</div>
+                </div>
+            </div>
+        </div>
+        <div id="projects-div" class="contentdiv">
+            <p id="projects" class="contentp">
+            PlusMe Project:<br><br>Through a student-org I am in called Code the Change, I worked on a web dev project featuring an interactive journal 
+            to aid students with college application process as part of the PLUS ME Project, using React, Express, Node.js, and Postgres.
+            <br><br>gsec:<br><br>Through another student-org I am in, CAIS++, I worked on a group project to create a generalized classifier for genomic data
+             in collaboration with the Smith Computational Genomics Lab.
+            <br><br>Research Lab:<br><br>I also worked in a research lab where I studied ML and RL techniques with the goal of modeling human-inspired multirobot coordination.
+            <br><br>Todo Restaurants:<br><br>This was my project for Google CSSI last summer that used the Google Maps API to find restaurants in the user's area based on user food preferences.
+            </p>
+        </div>
+        <div id="pictures-div" class="contentdiv">
+            <div id="slides-title-container">
+                <img class="arrow title-arrow" src='/images/prev.png' alt='prev' onclick="changeShow(-1)">
+                <div id="slides-title" class ="pictures">
+                    <p>Baking</p>
+                </div>
+                <img class="arrow title-arrow" src='/images/next.png' alt='next' onclick="changeShow(1)">
+            </div>
+            <div id="slideshow-container-container">
+                <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
+                <div id="slideshow-container">
+                    <div class='slides' style='display:block'> 
+                        <img id='slide-img' src='/images/b1.jpg' style='width:300px; height:400px; object-fit: cover;'>
+                    </div>
+                </div>
+                <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
+            </div>
+        </div>
+
+      <!-- <p>Click here to get a random message:</p> -->
+      <!-- <button onclick="addRandomGreeting()">Hello</button>
+      <div id="greeting-container"></div> -->
+
     </div>
   </body>
 </html>
