@@ -13,9 +13,9 @@
     <link rel="manifest" href="/site.webmanifest">
 
   </head>
-  <body>
+  <body onload="getHelloMessage()">
     <div id="header">
-        <h1>Hi!</h1>
+        <h1 id="helloheader"></h1>
         <div id="tabs">
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>

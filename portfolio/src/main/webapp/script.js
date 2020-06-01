@@ -152,3 +152,9 @@ function toggleProjectOff(id) {
     square.style.height = "300px";
     square.style.background = "rgb(64, 78, 77, .25)";
 }
+
+async function getHelloMessage() {
+    const response = await fetch('/data');
+    const hello = await response.text();
+    document.getElementById('helloheader').innerText = hello;
+}
