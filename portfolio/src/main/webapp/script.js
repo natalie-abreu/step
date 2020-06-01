@@ -155,6 +155,16 @@ function toggleProjectOff(id) {
 
 async function getHelloMessage() {
     const response = await fetch('/data');
-    const hello = await response.text();
-    document.getElementById('helloheader').innerText = hello;
+    const hello = await response.json();
+    let comments = document.getElementById('comments-div');
+    comments.innerHTML = '';
+    for (msg of hello) {
+        comments.appendChild(createComment(msg));
+    }
+}
+
+function createComment(text) {
+  const comment = document.createElement('p');
+  comment.innerText = text;
+  return comment;
 }
