@@ -15,22 +15,48 @@
   </head>
   <body onload="getHelloMessage()">
     <div id="header">
-        <h1 id="helloheader"></h1>
+        <h1>Hi!</h1>
         <div id="tabs">
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
             <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
             <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects 2.0</p>
+            <!-- <p id="comments-tab" class="tab" onclick="switchPage(this.id)">Comments</p> -->
         </div>
     </div>
     <div id="content">
+        <!-- <div id="comments-div" class="contentdiv" >
+            <form action="/data" method="POST">
+                <p>Leave a Comment:</p>
+                <input name="user-input">
+                <br/><br/>
+                <input type="submit" />
+            </form>
+            <div id="comments-board">
+            </div>
+        </div> -->
         <div id="aboutme-div" class="contentdiv">
-            <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
-            <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
-            I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
-            <div id="links">
-                <a href="https://www.linkedin.com/in/natalie-abreu/"><div id="linkedin-icon"><img id="linkedin-img" src='/images/LI-In-Bug.png' alt="LinkedIn"></div></a>
-                <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+            <div id="top-div">
+                <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
+                <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
+                I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
+                <div id="links">
+                    <a href="https://www.linkedin.com/in/natalie-abreu/"><div id="linkedin-icon"><img id="linkedin-img" src='/images/LI-In-Bug.png' alt="LinkedIn"></div></a>
+                    <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+                </div>
+            </div>
+            <div id="bottom-div">
+                <form id="comments-form" action="/data" method="POST">
+                    <p>Leave a Comment:</p>
+                    <textarea id="comments-input" name="user-input"></textarea>
+                    <br/><br/>
+                    <input id="submit-button" type="submit" />
+                </form>
+                <div id="comments-area">
+                    <p>Comments:</p>
+                    <div id="comments-board">
+                    </div>
+                </div>
             </div>
         </div>
          <div id="projectsexp-div" class="contentdiv">
