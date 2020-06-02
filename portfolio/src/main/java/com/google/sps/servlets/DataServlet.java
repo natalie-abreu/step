@@ -33,18 +33,20 @@ public class DataServlet extends HttpServlet {
   @Override
   public void init() {
     messages = new ArrayList<>();
-    messages.add("Hi!");
-    messages.add("Hello!");
-    messages.add("Welcome to my portfolio");
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // response.setContentType("text/html;");
-    // response.getWriter().println(message);
     response.setContentType("application/json;");
     String json = convertToJsonUsingGson(messages);
     response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String newComment = request.getParameter("user-input");
+      messages.add(newComment);
+      response.sendRedirect("/index.html");
   }
 
   private String convertToJsonUsingGson(List<String> messages) {

@@ -36,6 +36,10 @@ function switchPage(id) {
     const res = id.split("-");
     const activeText = document.getElementById(res[0]+"-div");
     activeText.style.display = "block";
+    // if (res[0] == "comments") {
+    //     console.log("getting comments");
+    //     getHelloMessage();
+    // }
 }
 
 // js for templated slideshows
@@ -154,13 +158,27 @@ function toggleProjectOff(id) {
 }
 
 async function getHelloMessage() {
-    const response = await fetch('/data');
-    const hello = await response.json();
-    let comments = document.getElementById('comments-div');
-    comments.innerHTML = '';
-    for (msg of hello) {
-        comments.appendChild(createComment(msg));
-    }
+    fetch('/data').then(response => response.json()).then((comments) => {
+        let board = document.getElementById("comments-board");
+        board.innerText = '';
+        for (msg of comments) {
+            board.appendChild(createComment(msg));
+        }
+
+    });
+    // const response = await fetch('/data');
+    // const hello = await response.json();
+    // let comments = document.getElementById('comments-div');
+    // for (msg of hello) {
+    //     comments.appendChild(createComment(msg));
+    // }
+    // // set comments tab back to active after refresh
+    // const allContent = document.getElementsByClassName("contentdiv");
+    // for (item of allContent) {
+    //     item.style.display = "none";
+    //  }
+    // const activeText = document.getElementById("comments-div");
+    // activeText.style.display = "block";
 }
 
 function createComment(text) {

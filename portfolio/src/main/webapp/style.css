@@ -184,3 +184,33 @@ body {
     font-size: 18px;
     line-height: 18px;
 }
+
+#bottom-div {
+    display: flex;
+    margin-top: 50px;
+}
+
+#comments-form {
+    width: 50%;
+}
+
+#submit-button {
+    background: #404E4D;
+    width: 100px;
+    height: 35px;
+    color: #EBF6FF;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    border: none;
+}
+
+#comments-input {
+    height: 25px;
+    width: 250px;
+}
+
+#comments-area {
+    float: right;
+    width: 50%;
+}
+
