@@ -36,10 +36,6 @@ function switchPage(id) {
     const res = id.split("-");
     const activeText = document.getElementById(res[0]+"-div");
     activeText.style.display = "block";
-    // if (res[0] == "comments") {
-    //     console.log("getting comments");
-    //     getHelloMessage();
-    // }
 }
 
 // js for templated slideshows

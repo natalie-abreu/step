@@ -21,20 +21,10 @@
             <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
             <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
             <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects 2.0</p>
-            <!-- <p id="comments-tab" class="tab" onclick="switchPage(this.id)">Comments</p> -->
         </div>
     </div>
     <div id="content">
-        <!-- <div id="comments-div" class="contentdiv" >
-            <form action="/data" method="POST">
-                <p>Leave a Comment:</p>
-                <input name="user-input">
-                <br/><br/>
-                <input type="submit" />
-            </form>
-            <div id="comments-board">
-            </div>
-        </div> -->
+
         <div id="aboutme-div" class="contentdiv">
             <div id="top-div">
                 <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
@@ -84,7 +74,6 @@
                     onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Todo Restaurants</div>
                 </div>
                 <div class="projects-grid-item-div">
-                    <!-- <img class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec"> -->
                     <div id="research-4" class="projects-img-text" 
                     onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Research Lab</div>
                 </div>
@@ -118,11 +107,6 @@
                 <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
             </div>
         </div>
-
-      <!-- <p>Click here to get a random message:</p> -->
-      <!-- <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div> -->
-
     </div>
   </body>
 </html>
