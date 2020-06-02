@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+ import com.google.appengine.api.datastore.FetchOptions;
+
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -37,13 +39,14 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    int numComments = getNumComments(request);
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-
     List<String> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+
+    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments+1))) {
         long id = entity.getKey().getId();
         String message = (String) entity.getProperty("title");
         long timestamp = (long) entity.getProperty("timestamp");
@@ -75,5 +78,17 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(messages);
     return json;
+  }
+
+  private int getNumComments(HttpServletRequest request) {
+      String userInput = request.getParameter("max");
+      int numComments;
+      try {
+        numComments = Integer.parseInt(userInput);
+      } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " + userInput);
+        return 5;
+      }
+      return numComments;
   }
 }

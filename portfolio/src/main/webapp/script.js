@@ -157,28 +157,14 @@ function toggleProjectOff(id) {
     square.style.background = "rgb(64, 78, 77, .25)";
 }
 
-async function getHelloMessage() {
-    fetch('/data').then(response => response.json()).then((comments) => {
+async function getHelloMessage(numComments) {
+    fetch('/data?max='+numComments).then(response => response.json()).then((comments) => {
         let board = document.getElementById("comments-board");
         board.innerText = '';
         for (msg of comments) {
             board.appendChild(createComment(msg));
         }
-
     });
-    // const response = await fetch('/data');
-    // const hello = await response.json();
-    // let comments = document.getElementById('comments-div');
-    // for (msg of hello) {
-    //     comments.appendChild(createComment(msg));
-    // }
-    // // set comments tab back to active after refresh
-    // const allContent = document.getElementsByClassName("contentdiv");
-    // for (item of allContent) {
-    //     item.style.display = "none";
-    //  }
-    // const activeText = document.getElementById("comments-div");
-    // activeText.style.display = "block";
 }
 
 function createComment(text) {

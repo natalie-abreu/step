@@ -204,11 +204,6 @@ body {
     border: none;
 }
 
-#comments-input {
-    height: 25px;
-    width: 250px;
-}
-
 #comments-area {
     float: right;
     width: 50%;
