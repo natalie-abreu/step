@@ -37,20 +37,20 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    const String datastoreType = "Comment";
-    const String commentTimestamp = "timestamp";
-    const String commentTitle = "title";
+    static String dataType = "Comment";
+    static String commentTimestamp = "timestamp";
+    static String commentTitle = "title";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int numComments = getNumComments(request);
-    Query query = new Query(datastoreType).addSort(commentTimestamp, SortDirection.DESCENDING);
+    Query query = new Query(dataType).addSort(commentTimestamp, SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     List<String> comments = new ArrayList<>();
 
-    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments+1))) {
+    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments))) {
         long id = entity.getKey().getId();
         String message = (String) entity.getProperty(commentTitle);
         long timestamp = (long) entity.getProperty(commentTimestamp);
@@ -68,7 +68,7 @@ public class DataServlet extends HttpServlet {
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
-      Entity commentEntity = new Entity(datastoreType);
+      Entity commentEntity = new Entity(dataType);
       commentEntity.setProperty(commentTitle, newComment);
       commentEntity.setProperty(commentTimestamp, timestamp);
 

@@ -38,11 +38,10 @@ h1  {
 .tab {
     margin-right: 15px;
     margin-left: 10px;
-    cursor: auto;
+    cursor: pointer;
 }
 
 .tab:hover {
-    cursor: auto;
     padding-top:2px;
 }
 
@@ -61,7 +60,7 @@ body {
 
 #aboutme-div {
     display:block;
-    height: 300px;
+    height: 80vh;
 }
 
 #aboutme {
@@ -127,6 +126,7 @@ body {
     height: 40px;
     width: 25px;
     margin: 10px;
+    cursor: pointer;
 }
 
 .title-arrow {
@@ -134,6 +134,7 @@ body {
     width: 8px;
     margin-left: 40px;
     margin-right: 40px;
+    cursor: pointer;
 }
 
 #slides-title-container {
@@ -188,6 +189,7 @@ body {
 #bottom-div {
     display: flex;
     margin-top: 50px;
+    height: 80%;
 }
 
 #comments-form {
@@ -204,8 +206,39 @@ body {
     border: none;
 }
 
+.button, button {
+    cursor: pointer;
+    background: #404E4D;
+    width: 100px;
+    height: 35px;
+    color: #EBF6FF;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    border: none;
+}
+
+#comments-board {
+    height: 50%;
+    margin-top: 30px;
+    border: 2px solid #404E4D;
+    padding: 10px;
+    line-height: 18px;
+}
+
 #comments-area {
     float: right;
     width: 50%;
+    height: 600px;
 }
 
+#clear-button {
+    width: 200px;
+    margin-top: 30px;
+}
+
+#max-selection {
+    border: 2px #404E4D;
+    background: #EBF6FF;
+    color: #404E4D;
+    border-style: solid;
+}
