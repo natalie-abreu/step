@@ -216,6 +216,10 @@ body {
     border: none;
 }
 
+#comments-form {
+    float: left;
+}
+
 #comments-board {
     min-height: 50%;
     margin-top: 30px;
