@@ -155,7 +155,23 @@ function toggleProjectOff(id) {
     square.style.background = "rgb(64, 78, 77, .25)";
 }
 
-async function getComments(numComments=5) {
+async function getComments(numComments=0) {
+    // prevent resetting of dropdown selection on refresh/submit
+    // use default 0 to indicate that user has not selected a # of comments
+    if (numComments == 0) {
+        if (!sessionStorage.numComments) {
+            // if nothing in session storage, show 5 comments
+            numComments = 5;
+            sessionStorage.numComments = numComments;
+        }
+        else numComments = sessionStorage.numComments;
+    }
+    else {
+        sessionStorage.numComments = numComments;
+    }
+    let maxSelection = document.getElementById("max-selection");
+    maxSelection.value = numComments;
+    
     const response = await fetch(`/data?max=${numComments}`);
     const comments = await response.json();
     let board = document.getElementById("comments-board");
