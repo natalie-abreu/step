@@ -28,18 +28,6 @@ function addRandomGreeting() {
 }
 
 
-
-// switch page when header tab is clicked
-function switchPage(id) {
-    const allContent = document.getElementsByClassName("contentdiv");
-    for (item of allContent) {
-        item.style.display = "none";
-     }
-    const res = id.split("-");
-    const activeText = document.getElementById(res[0]+"-div");
-    activeText.style.display = "block";
-}
-
 // js for templated slideshows
 let slideIndex = 0;
 let show_title = 'b';
@@ -155,24 +143,26 @@ function toggleProjectOff(id) {
     square.style.background = "rgb(64, 78, 77, .25)";
 }
 
-async function getComments(numComments=0) {
+let page_num = 1;
+async function getComments(pageInc=0, numComments=0) {
     numComments = await restoreNumComments(numComments);
-    console.log(numComments);
-    const response = await fetch(`/data?max=${numComments}`);
-    const comments = await response.json();
-    console.log(comments);
+    page_num+=pageInc;
+    if (page_num == 0) page_num=1;
+    const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
+    // will catch case when page is out of bounds
+    let comments;
+    try {
+        comments = await response.json();
+    } catch(e) {
+        page_num-=1;
+        console.log(e);
+        return;
+    }
     let board = document.getElementById("comments-board");
     board.innerText = '';
     for (msg of comments) {
         board.appendChild(createComment(msg));
     }
-
-    const allContent = document.getElementsByClassName("contentdiv");
-    for (item of allContent) {
-        item.style.display = "none";
-     }
-    const activeText = document.getElementById("comments-div");
-    activeText.style.display = "block";
 }
 
 function createComment(msg) {
@@ -181,7 +171,7 @@ function createComment(msg) {
 
   const initial = document.createElement('div');
   initial.className = "comment-initial";
-  initial.innerText = msg.name[0].toUpperCase();
+  if (msg.name != "") initial.innerText = msg.name[0].toUpperCase();
 
   const message = document.createElement('div');
   message.className = "comment-message";
@@ -194,6 +184,7 @@ function createComment(msg) {
 }
 
 async function clearComments() {
+    page_num = 0;
     const request = new Request('/delete-data', {method: 'POST'});
     await fetch(request);
     getComments();

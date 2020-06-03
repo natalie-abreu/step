@@ -23,6 +23,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.QueryResultList;
+
 
 
 import java.io.IOException;
@@ -38,28 +40,44 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  static String dataType = "Comment";
-  static String commentTimestamp = "timestamp";
-  static String commentAuthor = "name";
-  static String commentContent = "message";
-  static String maxCommentsParam = "max";
+  static String DATA_TYPE = "Comment";
+  static String COMMENT_TIMESTAMP = "timestamp";
+  static String COMMENT_AUTHOR = "name";
+  static String COMMENT_CONTENT = "message";
+  static String MAX_COMMENTS_PARAM = "max";
+  static String PAGE_NUM_PARAM = "page";
+  static int PAGE_SIZE;
+  static int PAGE_NUM;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int numComments = getNumComments(request);
-    Query query = new Query(dataType).addSort(commentTimestamp, SortDirection.DESCENDING);
+    PAGE_SIZE = getNumComments(request);
+    PAGE_NUM = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
 
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE*PAGE_NUM);
+
+    Query query = new Query(DATA_TYPE).addSort(COMMENT_TIMESTAMP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    PreparedQuery pq = datastore.prepare(query);
+
+    QueryResultList<Entity> results;
+    results = pq.asQueryResultList(fetchOptions);
+
+    // page invalid
+    if (PAGE_NUM <= 0 || Math.ceil(results.size() / (double)PAGE_SIZE) < PAGE_NUM) return;
+    // find how many comments should be displayed
+    int numResults = results.size() % PAGE_SIZE;
+    if (numResults == 0) numResults = PAGE_SIZE;
+
     List<Comment> comments = new ArrayList<>();
-
-    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments))) {
+    for (int i = results.size()-numResults; i < results.size(); i++) {
+        Entity entity = results.get(i);
         long id = entity.getKey().getId();
-        String author = (String) entity.getProperty(commentAuthor);
-        long timestamp = (long) entity.getProperty(commentTimestamp);
-        String message = (String) entity.getProperty(commentContent);
-        Comment comment = new Comment(id, author, timestamp, message);
+        String author = (String) entity.getProperty(COMMENT_AUTHOR);
+        long timestamp = (long) entity.getProperty(COMMENT_TIMESTAMP);
+        String message = (String) entity.getProperty(COMMENT_CONTENT);
 
+        Comment comment = new Comment(id, author, timestamp, message);
         comments.add(comment);
     }
 
@@ -74,10 +92,10 @@ public class DataServlet extends HttpServlet {
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
-      Entity commentEntity = new Entity(dataType);
-      commentEntity.setProperty(commentContent, newComment);
-      commentEntity.setProperty(commentTimestamp, timestamp);
-      commentEntity.setProperty(commentAuthor, name);
+      Entity commentEntity = new Entity(DATA_TYPE);
+      commentEntity.setProperty(COMMENT_CONTENT, newComment);
+      commentEntity.setProperty(COMMENT_TIMESTAMP, timestamp);
+      commentEntity.setProperty(COMMENT_AUTHOR, name);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -92,7 +110,7 @@ public class DataServlet extends HttpServlet {
   }
 
   private int getNumComments(HttpServletRequest request) {
-      String userInput = request.getParameter(maxCommentsParam);
+      String userInput = request.getParameter(MAX_COMMENTS_PARAM);
       int numComments;
       try {
         numComments = Integer.parseInt(userInput);

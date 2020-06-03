@@ -236,7 +236,7 @@ body {
 
 #clear-button {
     width: 200px;
-    margin-top: 30px;
+    margin-top: 15px;
 }
 
 #max-selection {
@@ -269,4 +269,8 @@ a {
 
 .comment-message {
     max-width: 90%;
+}
+
+.comments-page-inc {
+    margin-top: 15px;
 }
