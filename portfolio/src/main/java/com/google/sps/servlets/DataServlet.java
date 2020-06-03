@@ -21,7 +21,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
- import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.FetchOptions;
 
 
 import java.io.IOException;
@@ -37,9 +37,10 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-    static String dataType = "Comment";
-    static String commentTimestamp = "timestamp";
-    static String commentTitle = "title";
+  static String dataType = "Comment";
+  static String commentTimestamp = "timestamp";
+  static String commentTitle = "title";
+  static String maxCommentsParam = "max";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -79,18 +80,19 @@ public class DataServlet extends HttpServlet {
   }
 
   private String convertToJsonUsingGson(List<String> messages) {
-    Gson gson = new Gson();
-    String json = gson.toJson(messages);
-    return json;
+      Gson gson = new Gson();
+      String json = gson.toJson(messages);
+      return json;
   }
 
   private int getNumComments(HttpServletRequest request) {
-      String userInput = request.getParameter("max");
+      String userInput = request.getParameter(maxCommentsParam);
       int numComments;
       try {
         numComments = Integer.parseInt(userInput);
       } catch (NumberFormatException e) {
         System.err.println("Could not convert to int: " + userInput);
+        // defaults to showing 5 comments
         return 5;
       }
       return numComments;
