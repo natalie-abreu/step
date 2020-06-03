@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
@@ -18,23 +19,12 @@
         <h1>Hi!</h1>
         <div id="tabs">
             <p id="aboutme-tab" class="tab" onclick="switchPage(this.id)">About Me</p>
-            <p id="projects-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
+            <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects</p>
             <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Pictures</p>
-            <p id="projectsexp-tab" class="tab" onclick="switchPage(this.id)">Projects 2.0</p>
-            <!-- <p id="comments-tab" class="tab" onclick="switchPage(this.id)">Comments</p> -->
+            <p id="pictures-tab" class="tab" onclick="switchPage(this.id)">Comments</p>
         </div>
     </div>
     <div id="content">
-        <!-- <div id="comments-div" class="contentdiv" >
-            <form action="/data" method="POST">
-                <p>Leave a Comment:</p>
-                <input name="user-input">
-                <br/><br/>
-                <input type="submit" />
-            </form>
-            <div id="comments-board">
-            </div>
-        </div> -->
         <div id="aboutme-div" class="contentdiv">
             <div id="top-div">
                 <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
@@ -48,14 +38,20 @@
             <div id="bottom-div">
                 <form id="comments-form" action="/data" method="POST">
                     <p>Leave a Comment:</p>
-                    <textarea id="comments-input" name="user-input"></textarea>
+                    <input id="comments-input" name="user-input">
                     <br/><br/>
-                    <input id="submit-button" type="submit" />
+                    <input class="button" id="submit-button" type="submit" />
                 </form>
                 <div id="comments-area">
                     <p>Comments:</p>
+                    <select class="button" name="max-comments" id="max-selection" onchange="getHelloMessage(this.value)">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                    </select>
                     <div id="comments-board">
                     </div>
+                    <button id="clear-button" type="button" onclick="clearComments()">Clear Comments</button>
                 </div>
             </div>
         </div>
@@ -77,7 +73,6 @@
                     onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Todo Restaurants</div>
                 </div>
                 <div class="projects-grid-item-div">
-                    <!-- <img class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec"> -->
                     <div id="research-4" class="projects-img-text" 
                     onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Research Lab</div>
                 </div>
@@ -111,11 +106,6 @@
                 <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
             </div>
         </div>
-
-      <!-- <p>Click here to get a random message:</p> -->
-      <!-- <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div> -->
-
     </div>
   </body>
 </html>

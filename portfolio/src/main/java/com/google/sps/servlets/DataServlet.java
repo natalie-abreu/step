@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
+
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -35,18 +37,24 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
+  static String dataType = "Comment";
+  static String commentTimestamp = "timestamp";
+  static String commentTitle = "title";
+  static String maxCommentsParam = "max";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    int numComments = getNumComments(request);
+    Query query = new Query(dataType).addSort(commentTimestamp, SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-
     List<String> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
+
+    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments))) {
         long id = entity.getKey().getId();
-        String message = (String) entity.getProperty("title");
-        long timestamp = (long) entity.getProperty("timestamp");
+        String message = (String) entity.getProperty(commentTitle);
+        long timestamp = (long) entity.getProperty(commentTimestamp);
 
         comments.add(message);
     }
@@ -61,9 +69,9 @@ public class DataServlet extends HttpServlet {
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
-      Entity commentEntity = new Entity("Comment");
-      commentEntity.setProperty("title", newComment);
-      commentEntity.setProperty("timestamp", timestamp);
+      Entity commentEntity = new Entity(dataType);
+      commentEntity.setProperty(commentTitle, newComment);
+      commentEntity.setProperty(commentTimestamp, timestamp);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -72,8 +80,21 @@ public class DataServlet extends HttpServlet {
   }
 
   private String convertToJsonUsingGson(List<String> messages) {
-    Gson gson = new Gson();
-    String json = gson.toJson(messages);
-    return json;
+      Gson gson = new Gson();
+      String json = gson.toJson(messages);
+      return json;
+  }
+
+  private int getNumComments(HttpServletRequest request) {
+      String userInput = request.getParameter(maxCommentsParam);
+      int numComments;
+      try {
+        numComments = Integer.parseInt(userInput);
+      } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " + userInput);
+        // defaults to showing 5 comments
+        return 5;
+      }
+      return numComments;
   }
 }
