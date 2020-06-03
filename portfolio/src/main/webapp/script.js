@@ -27,6 +27,8 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
+
+
 // switch page when header tab is clicked
 function switchPage(id) {
     const allContent = document.getElementsByClassName("contentdiv");
@@ -153,7 +155,7 @@ function toggleProjectOff(id) {
     square.style.background = "rgb(64, 78, 77, .25)";
 }
 
-async function getHelloMessage(numComments=5) {
+async function getComments(numComments=5) {
     const response = await fetch(`/data?max=${numComments}`);
     const comments = await response.json();
     let board = document.getElementById("comments-board");
@@ -161,6 +163,13 @@ async function getHelloMessage(numComments=5) {
     for (msg of comments) {
         board.appendChild(createComment(msg));
     }
+
+    const allContent = document.getElementsByClassName("contentdiv");
+    for (item of allContent) {
+        item.style.display = "none";
+     }
+    const activeText = document.getElementById("comments-div");
+    activeText.style.display = "block";
 }
 
 function createComment(text) {
@@ -172,5 +181,5 @@ function createComment(text) {
 async function clearComments() {
     const request = new Request('/delete-data', {method: 'POST'});
     await fetch(request);
-    getHelloMessage();
+    getComments();
 }

@@ -14,8 +14,8 @@
     <link rel="manifest" href="/site.webmanifest">
 
   </head>
-  <body onload="getComments()">
-      <div id="header">
+  <body>
+    <div id="header">
         <h1>Hi!</h1>
         <div id="tabs">
             <p id="aboutme-tab" class="tab"><a href="index.html">About Me</a></p>
@@ -24,25 +24,23 @@
             <p id="comments-tab" class="tab"><a href="comments.html">Comments</a></p>
         </div>
     </div>
-        <div id="content">
-            <div id="comments-div" class="contentdiv">
-            <form id="comments-form" action="/data" method="POST">
-                <p>Leave a Comment:</p>
-                <input id="comments-input" name="user-input">
-                <br/><br/>
-                <input class="button" id="submit-button" type="submit" />
-            </form>
-            <div id="comments-area">
-                <p>Comments:</p>
-                <select class="button" name="max-comments" id="max-selection" onchange="getComments(this.value)">
-                    <option value=5>5</option>
-                    <option value=10>10</option>
-                    <option value=20>20</option>
-                </select>
-                <div id="comments-board">
+    <div id="content">
+        <div id="pictures-div" class="contentdiv">
+            <div id="slides-title-container">
+                <img class="arrow title-arrow" src='/images/prev.png' alt='prev' onclick="changeShow(-1)">
+                <div id="slides-title" class ="pictures">
+                    <p>Baking</p>
                 </div>
-                <button id="clear-button" type="button" onclick="clearComments()">Clear Comments</button>
+                <img class="arrow title-arrow" src='/images/next.png' alt='next' onclick="changeShow(1)">
+            </div>
+            <div id="slideshow-container-container">
+                <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
+                <div id="slideshow-container">
+                    <div class='slides' style='display:block'> 
+                        <img id='slide-img' src='/images/b1.jpg' style='width:300px; height:400px; object-fit: cover;'>
+                    </div>
+                </div>
+                <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
             </div>
         </div>
-        </div>
-    </body>
+    </div>

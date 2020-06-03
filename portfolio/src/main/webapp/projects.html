@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+  </head>
+  <body>
+    <div id="header">
+        <h1>Hi!</h1>
+        <div id="tabs">
+            <p id="aboutme-tab" class="tab"><a href="index.html">About Me</a></p>
+            <p id="projectsexp-tab" class="tab"><a href="projects.html">Projects</a></p>
+            <p id="pictures-tab" class="tab"><a href="pictures.html">Pictures</a></p>
+            <p id="comments-tab" class="tab"><a href="comments.html">Comments</a></p>
+        </div>
+    </div>
+    <div id="content">
+        <div id="projectsexp-div" class="contentdiv">
+             <div class="projects-grid">
+                <div class="projects-grid-item-div">
+                    <img id="ctc-img" class="projects-img" src="/images/ctc.JPG" alt="Code the Change & PlusMe Project">
+                    <div id="ctc-1" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">PlusMe Project</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cais-img" class="projects-img" src="/images/cais.JPG" alt="CAIS++ & gsec">
+                    <div id="cais-2" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">gsec</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <img id="cssi-img" class="projects-img" src="/images/cssi.jpg" alt="CSSI & Todo Restaurants">
+                    <div id="cssi-3" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Todo Restaurants</div>
+                </div>
+                <div class="projects-grid-item-div">
+                    <div id="research-4" class="projects-img-text" 
+                    onmouseover="toggleProjectOn(this.id)" onmouseout="toggleProjectOff(this.id)">Research Lab</div>
+                </div>
+            </div>
+        </div>
+    </div>

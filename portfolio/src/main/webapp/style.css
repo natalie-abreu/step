@@ -53,7 +53,6 @@ body {
 }
 
 .contentdiv {
-    display: none;
     padding-top: 20px;
     margin-bottom: 20px;
 }
@@ -241,4 +240,9 @@ body {
     background: #EBF6FF;
     color: #404E4D;
     border-style: solid;
+}
+
+a {
+    color: #EBF6FF;
+    text-decoration: none;
 }
