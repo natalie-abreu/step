@@ -217,7 +217,7 @@ body {
 }
 
 #comments-board {
-    height: 50%;
+    min-height: 50%;
     margin-top: 30px;
     border: 2px solid #404E4D;
     padding: 10px;
@@ -245,4 +245,24 @@ body {
 a {
     color: #EBF6FF;
     text-decoration: none;
+}
+
+.comment {
+    display: flex;
+    line-height: 30px;
+    margin-bottom: 5px;
+}
+
+.comment-initial {
+    color: #EBF6FF;
+    background: #404E4D;
+    border-radius: 15px;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.comment-message {
+    max-width: 90%;
 }

@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 import com.google.gson.*;
+import com.google.sps.data.Comment;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -39,7 +40,8 @@ public class DataServlet extends HttpServlet {
 
   static String dataType = "Comment";
   static String commentTimestamp = "timestamp";
-  static String commentTitle = "title";
+  static String commentAuthor = "name";
+  static String commentContent = "message";
   static String maxCommentsParam = "max";
 
   @Override
@@ -49,14 +51,16 @@ public class DataServlet extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    List<String> comments = new ArrayList<>();
+    List<Comment> comments = new ArrayList<>();
 
     for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments))) {
         long id = entity.getKey().getId();
-        String message = (String) entity.getProperty(commentTitle);
+        String author = (String) entity.getProperty(commentAuthor);
         long timestamp = (long) entity.getProperty(commentTimestamp);
+        String message = (String) entity.getProperty(commentContent);
+        Comment comment = new Comment(id, author, timestamp, message);
 
-        comments.add(message);
+        comments.add(comment);
     }
 
     response.setContentType("application/json;");
@@ -66,12 +70,14 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String name = request.getParameter("name-input");
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
       Entity commentEntity = new Entity(dataType);
-      commentEntity.setProperty(commentTitle, newComment);
+      commentEntity.setProperty(commentContent, newComment);
       commentEntity.setProperty(commentTimestamp, timestamp);
+      commentEntity.setProperty(commentAuthor, name);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
@@ -79,7 +85,7 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/comments.html");
   }
 
-  private String convertToJsonUsingGson(List<String> messages) {
+  private String convertToJsonUsingGson(List<Comment> messages) {
       Gson gson = new Gson();
       String json = gson.toJson(messages);
       return json;

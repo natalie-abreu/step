@@ -156,6 +156,50 @@ function toggleProjectOff(id) {
 }
 
 async function getComments(numComments=0) {
+    numComments = await restoreNumComments(numComments);
+    console.log(numComments);
+    const response = await fetch(`/data?max=${numComments}`);
+    const comments = await response.json();
+    console.log(comments);
+    let board = document.getElementById("comments-board");
+    board.innerText = '';
+    for (msg of comments) {
+        board.appendChild(createComment(msg));
+    }
+
+    const allContent = document.getElementsByClassName("contentdiv");
+    for (item of allContent) {
+        item.style.display = "none";
+     }
+    const activeText = document.getElementById("comments-div");
+    activeText.style.display = "block";
+}
+
+function createComment(msg) {
+  const comment = document.createElement('div');
+  comment.className = "comment";
+
+  const initial = document.createElement('div');
+  initial.className = "comment-initial";
+  initial.innerText = msg.name[0].toUpperCase();
+
+  const message = document.createElement('div');
+  message.className = "comment-message";
+  message.innerText = msg.message;
+
+  comment.appendChild(initial);
+  comment.appendChild(message);
+
+  return comment;
+}
+
+async function clearComments() {
+    const request = new Request('/delete-data', {method: 'POST'});
+    await fetch(request);
+    getComments();
+}
+
+function restoreNumComments(numComments) {
     // prevent resetting of dropdown selection on refresh/submit
     // use default 0 to indicate that user has not selected a # of comments
     if (numComments == 0) {
@@ -171,31 +215,5 @@ async function getComments(numComments=0) {
     }
     let maxSelection = document.getElementById("max-selection");
     maxSelection.value = numComments;
-    
-    const response = await fetch(`/data?max=${numComments}`);
-    const comments = await response.json();
-    let board = document.getElementById("comments-board");
-    board.innerText = '';
-    for (msg of comments) {
-        board.appendChild(createComment(msg));
-    }
-
-    const allContent = document.getElementsByClassName("contentdiv");
-    for (item of allContent) {
-        item.style.display = "none";
-     }
-    const activeText = document.getElementById("comments-div");
-    activeText.style.display = "block";
-}
-
-function createComment(text) {
-  const comment = document.createElement('p');
-  comment.innerText = text;
-  return comment;
-}
-
-async function clearComments() {
-    const request = new Request('/delete-data', {method: 'POST'});
-    await fetch(request);
-    getComments();
+    return numComments;
 }
