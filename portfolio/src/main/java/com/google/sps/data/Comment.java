@@ -17,6 +17,11 @@ package com.google.sps.data;
 /** An item on a todo list. */
 public final class Comment {
 
+  public static String DATA_TYPE = "Comment";
+  public static String TIMESTAMP = "timestamp";
+  public static String AUTHOR = "name";
+  public static String CONTENT = "message";
+
   private final long id;
   private final String name;
   private final long timestamp;

@@ -40,23 +40,17 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  static String DATA_TYPE = "Comment";
-  static String COMMENT_TIMESTAMP = "timestamp";
-  static String COMMENT_AUTHOR = "name";
-  static String COMMENT_CONTENT = "message";
   static String MAX_COMMENTS_PARAM = "max";
   static String PAGE_NUM_PARAM = "page";
-  static int PAGE_SIZE;
-  static int PAGE_NUM;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    PAGE_SIZE = getNumComments(request);
-    PAGE_NUM = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
+    int PAGE_SIZE = getNumComments(request);
+    int PAGE_NUM = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
 
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE*PAGE_NUM);
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(PAGE_SIZE).offset(PAGE_SIZE*(PAGE_NUM-1));
 
-    Query query = new Query(DATA_TYPE).addSort(COMMENT_TIMESTAMP, SortDirection.DESCENDING);
+    Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(query);
 
@@ -64,21 +58,17 @@ public class DataServlet extends HttpServlet {
     results = pq.asQueryResultList(fetchOptions);
 
     // page invalid
-    if (PAGE_NUM <= 0 || (results.size() != 0 && Math.ceil(results.size() / (double)PAGE_SIZE) < PAGE_NUM)) {
+    if (PAGE_NUM <= 0 || (PAGE_NUM != 1 && results.size() == 0)) {
         System.out.println("PAGE " + PAGE_NUM + " INVALID");
         return;
     }
-    // find how many comments should be displayed
-    int numResults = results.size() % PAGE_SIZE;
-    if (numResults == 0 && results.size() != 0) numResults = PAGE_SIZE;
-
+ 
     List<Comment> comments = new ArrayList<>();
-    for (int i = results.size()-numResults; i < results.size(); i++) {
-        Entity entity = results.get(i);
+    for (Entity entity : results) {
         long id = entity.getKey().getId();
-        String author = (String) entity.getProperty(COMMENT_AUTHOR);
-        long timestamp = (long) entity.getProperty(COMMENT_TIMESTAMP);
-        String message = (String) entity.getProperty(COMMENT_CONTENT);
+        String author = (String) entity.getProperty(Comment.AUTHOR);
+        long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
+        String message = (String) entity.getProperty(Comment.CONTENT);
 
         Comment comment = new Comment(id, author, timestamp, message);
         comments.add(comment);
@@ -95,10 +85,10 @@ public class DataServlet extends HttpServlet {
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
-      Entity commentEntity = new Entity(DATA_TYPE);
-      commentEntity.setProperty(COMMENT_CONTENT, newComment);
-      commentEntity.setProperty(COMMENT_TIMESTAMP, timestamp);
-      commentEntity.setProperty(COMMENT_AUTHOR, name);
+      Entity commentEntity = new Entity(Comment.DATA_TYPE);
+      commentEntity.setProperty(Comment.CONTENT, newComment);
+      commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
+      commentEntity.setProperty(Comment.AUTHOR, name);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
