@@ -265,6 +265,7 @@ a {
     width: 30px;
     text-align: center;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .comment-message {
@@ -273,4 +274,32 @@ a {
 
 .comments-page-inc {
     margin-top: 15px;
+}
+
+.comment-popup {
+    display: none;
+    font-size: 12px;
+    width: 100px;
+    background: #404E4D;
+    color: #EBF6FF;
+    opacity: 80%;
+    position: relative;
+    right: 35px;
+    z-index: 1;
+    bottom: 220%;
+    border-radius: 15px;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.comment-popup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+
 }

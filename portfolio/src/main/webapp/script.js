@@ -172,6 +172,15 @@ function createComment(msg) {
   const initial = document.createElement('div');
   initial.className = "comment-initial";
   if (msg.name != "") initial.innerText = msg.name[0].toUpperCase();
+  initial.id = msg.id + "-initial";
+
+  const popup = document.createElement('span');
+  popup.className = "comment-popup";
+  popup.innerText = msg.name;
+  popup.id = msg.id + "-popup";
+  initial.appendChild(popup);
+  initial.onmouseover = function() { showCommentInfo(initial.id); };
+  initial.onmouseout = function() { hideCommentInfo(initial.id); };
 
   const message = document.createElement('div');
   message.className = "comment-message";
@@ -207,4 +216,16 @@ function restoreNumComments(numComments) {
     let maxSelection = document.getElementById("max-selection");
     maxSelection.value = numComments;
     return numComments;
+}
+
+function showCommentInfo(id) {
+    id = id.split("-")[0]+"-popup";
+    const popup = document.getElementById(id);
+    popup.style.display = "block";
+}
+
+function hideCommentInfo(id) {
+    id = id.split("-")[0]+"-popup";
+    const popup = document.getElementById(id);
+    popup.style.display = "none";
 }

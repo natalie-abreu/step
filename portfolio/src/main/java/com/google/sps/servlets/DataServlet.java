@@ -64,10 +64,13 @@ public class DataServlet extends HttpServlet {
     results = pq.asQueryResultList(fetchOptions);
 
     // page invalid
-    if (PAGE_NUM <= 0 || Math.ceil(results.size() / (double)PAGE_SIZE) < PAGE_NUM) return;
+    if (PAGE_NUM <= 0 || (results.size() != 0 && Math.ceil(results.size() / (double)PAGE_SIZE) < PAGE_NUM)) {
+        System.out.println("PAGE " + PAGE_NUM + " INVALID");
+        return;
+    }
     // find how many comments should be displayed
     int numResults = results.size() % PAGE_SIZE;
-    if (numResults == 0) numResults = PAGE_SIZE;
+    if (numResults == 0 && results.size() != 0) numResults = PAGE_SIZE;
 
     List<Comment> comments = new ArrayList<>();
     for (int i = results.size()-numResults; i < results.size(); i++) {
