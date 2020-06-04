@@ -145,7 +145,7 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0) {
-    numComments = await restoreNumComments(numComments);
+    numComments = restoreNumComments(numComments);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
     const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
@@ -159,6 +159,7 @@ async function getComments(pageInc=0, numComments=0) {
         return;
     }
     let board = document.getElementById("comments-board");
+    setCommentBoardSize(numComments);
     board.innerText = '';
     for (msg of comments) {
         board.appendChild(createComment(msg));
@@ -239,6 +240,13 @@ function getMaxFromStorage(numComments) {
     return numComments;
 }
 
+function setCommentBoardSize(numComments) {
+    const board = document.getElementById("comments-board");
+    if (numComments == 5) board.style.minHeight = "30%";
+    else if (numComments == 10) board.style.minHeight = "59%";
+    else board.style.minHeight = "118%";
+}
+
 function showCommentInfo(id) {
     id = id.split("-")[0]+"-popup";
     let popup = document.getElementById(id);
@@ -263,7 +271,6 @@ function toggleCommentInfo(time, popup, popupName, popupDate, name) {
             toggleCommentInfo(4000, popup, popupName, popupDate, !name);
         }
     }, time);
-    
 }
 
 function hideCommentInfo(id) {
