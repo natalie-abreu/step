@@ -27,16 +27,6 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-// switch page when header tab is clicked
-function switchPage(id) {
-    const allContent = document.getElementsByClassName("contentdiv");
-    for (item of allContent) {
-        item.style.display = "none";
-     }
-    const res = id.split("-");
-    const activeText = document.getElementById(res[0]+"-div");
-    activeText.style.display = "block";
-}
 
 // js for templated slideshows
 let slideIndex = 0;
@@ -153,24 +143,138 @@ function toggleProjectOff(id) {
     square.style.background = "rgb(64, 78, 77, .25)";
 }
 
-async function getHelloMessage(numComments=5) {
-    const response = await fetch(`/data?max=${numComments}`);
-    const comments = await response.json();
+let page_num = 1;
+async function getComments(pageInc=0, numComments=0) {
+    numComments = restoreNumComments(numComments);
+    page_num+=pageInc;
+    if (page_num == 0) page_num=1;
+    const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
+    // will catch case when page is out of bounds
+    let comments;
+    try {
+        comments = await response.json();
+    } catch(e) {
+        page_num-=1;
+        console.log(e);
+        return;
+    }
     let board = document.getElementById("comments-board");
+    setCommentBoardSize(numComments);
     board.innerText = '';
     for (msg of comments) {
         board.appendChild(createComment(msg));
     }
 }
 
-function createComment(text) {
-  const comment = document.createElement('p');
-  comment.innerText = text;
-  return comment;
+function createComment(msg) {
+    const comment = document.createElement('div');
+    comment.className = "comment";
+
+    comment.appendChild(createCommentInitial(msg));
+    comment.appendChild(createCommentMessage(msg));
+
+    return comment;
+}
+
+function createCommentMessage(msg) {
+    const message = document.createElement('div');
+    message.className = "comment-message";
+    message.innerText = msg.message;
+    return message;
+}
+
+function createCommentInitial(msg) {
+    const initial = document.createElement('div');
+    initial.className = "comment-initial";
+    if (msg.name == "") msg.name = "?";
+    initial.innerText = msg.name[0].toUpperCase();
+    initial.id = msg.id + "-initial";
+
+    initial.appendChild(createCommentPopup(msg));
+    initial.onmouseover = function() { showCommentInfo(initial.id); };
+    initial.onmouseout = function() { hideCommentInfo(initial.id); };
+
+    return initial;
+}
+
+function createCommentPopup(msg) {
+    let msg_date = new Date(msg.timestamp).toDateString();
+    const popup = document.createElement('div');
+    popup.className = "comment-popup";
+    popup.id = msg.id + "-popup";
+    popup.innerHTML = `<p id=${msg.id}-popup-text-name class="comment-popup-text">${msg.name}</p>
+    <p id=${msg.id}-popup-text-date class="comment-popup-text" style="display:none">${msg_date}</p>
+    <div class="popup-triangle"></div>`;
+    
+    return popup;
 }
 
 async function clearComments() {
+    page_num = 0;
     const request = new Request('/delete-data', {method: 'POST'});
     await fetch(request);
-    getHelloMessage();
+    getComments();
+}
+
+function restoreNumComments(numComments) {
+    // prevent resetting of dropdown selection on refresh/submit
+    let maxSelection = document.getElementById("max-selection");
+    numComments = getMaxFromStorage(numComments);
+    maxSelection.value = numComments;
+    return numComments;
+}
+
+function getMaxFromStorage(numComments) {
+    // use default 0 to indicate that user has not selected a # of comments
+    if (numComments == 0) {
+        if (!sessionStorage.numComments) {
+            // if nothing in session storage, show 5 comments
+            numComments = 5;
+            sessionStorage.numComments = numComments;
+        }
+        else numComments = sessionStorage.numComments;
+    }
+    else {
+        sessionStorage.numComments = numComments;
+    }
+    return numComments;
+}
+
+function setCommentBoardSize(numComments) {
+    const board = document.getElementById("comments-board");
+    if (numComments == 5) board.style.minHeight = "30%";
+    else if (numComments == 10) board.style.minHeight = "59%";
+    else board.style.minHeight = "118%";
+}
+
+function showCommentInfo(id) {
+    id = id.split("-")[0]+"-popup";
+    let popup = document.getElementById(id);
+    const popupName = document.getElementById(id+'-text-name');
+    const popupDate = document.getElementById(id+'-text-date');
+    popup.style.display = "block";
+    toggleCommentInfo(0, popup, popupName, popupDate, true);
+}  
+
+function toggleCommentInfo(time, popup, popupName, popupDate, name) {
+    // alternate info between comment author and date
+    setTimeout(()=> {
+        if (name) {
+            popupName.style.display = "block";
+            popupDate.style.display = "none";
+        }
+        else {
+            popupName.style.display = "none";
+            popupDate.style.display = "block";
+        }
+        if (popup.style.display == "block") {
+            toggleCommentInfo(4000, popup, popupName, popupDate, !name);
+        }
+    }, time);
+}
+
+function hideCommentInfo(id) {
+    id = id.split("-")[0]+"-popup";
+    const popup = document.getElementById(id);
+    popup.style.display = "none";
 }

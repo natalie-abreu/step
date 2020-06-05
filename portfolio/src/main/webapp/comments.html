@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+  </head>
+  <body onload="getComments()">
+      <div id="header">
+        <h1>Hi!</h1>
+        <div id="tabs">
+            <p id="aboutme-tab" class="tab"><a href="index.html">About Me</a></p>
+            <p id="projectsexp-tab" class="tab"><a href="projects.html">Projects</a></p>
+            <p id="pictures-tab" class="tab"><a href="pictures.html">Pictures</a></p>
+            <p id="comments-tab" class="tab"><a href="comments.html">Comments</a></p>
+        </div>
+    </div>
+        <div id="content">
+            <div id="comments-div" class="contentdiv">
+                <form id="comments-form" action="/data" method="POST">
+                    <p>Leave a Comment</p><br>
+                    <p>Name:</p>
+                    <input id="name-input" name="name-input">
+                    <p>Message:</p>
+                    <input id="comments-input" name="user-input">
+                    <br/><br/>
+                    <input class="button" id="submit-button" type="submit" />
+                </form>
+                <div id="comments-area">
+                    <p>Comments:</p>
+                    <select class="button" name="max-comments" id="max-selection" onchange="getComments(pageInc=0,numComments=this.value)">
+                        <option value=5>5</option>
+                        <option value=10>10</option>
+                        <option value=20>20</option>
+                    </select>
+                    <div id="comments-board">
+                    </div>
+                    <button id="prev-comments" class="comments-page-inc" type="button" onclick="getComments(pageInc=-1)">Prev Page</button>
+                    <button id="next-comments" class="comments-page-inc" type="button" onclick="getComments(pageInc=1)">Next Page</button><br>
+                    <button id="clear-button" type="button" onclick="clearComments()">Clear Comments</button>
+                </div>
+            </div>
+        </div>
+    </body>

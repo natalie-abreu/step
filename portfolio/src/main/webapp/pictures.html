@@ -25,16 +25,22 @@
         </div>
     </div>
     <div id="content">
-        
-        <div id="aboutme-div" class="contentdiv">
-            <img id="profileimg" alt="profile picture" src='/images/profileimg_cropped.png'>
-            <p id="aboutme" class="contentp">Hi, I'm Natalie Abreu. I'm currently studying Computer Science at the University of Southern California. 
-            I'm originally from Chicago, IL, which is where I am currently working from.<br><br></p>
-            <div id="links">
-                <a href="https://www.linkedin.com/in/natalie-abreu/"><div id="linkedin-icon"><img id="linkedin-img" src='/images/LI-In-Bug.png' alt="LinkedIn"></div></a>
-                <a href="https://github.com/natalie-abreu"><div id="github-icon"><img id="github-img" src='/images/GitHub-Mark-Light-64px.png' alt="GitHub"></div></a>
+        <div id="pictures-div" class="contentdiv">
+            <div id="slides-title-container">
+                <img class="arrow title-arrow" src='/images/prev.png' alt='prev' onclick="changeShow(-1)">
+                <div id="slides-title" class ="pictures">
+                    <p>Baking</p>
+                </div>
+                <img class="arrow title-arrow" src='/images/next.png' alt='next' onclick="changeShow(1)">
             </div>
-        </div>    
+            <div id="slideshow-container-container">
+                <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
+                <div id="slideshow-container">
+                    <div class='slides' style='display:block'> 
+                        <img id='slide-img' src='/images/b1.jpg' style='width:300px; height:400px; object-fit: cover;'>
+                    </div>
+                </div>
+                <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
+            </div>
+        </div>
     </div>
-  </body>
-</html>

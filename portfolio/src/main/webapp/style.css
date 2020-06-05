@@ -53,7 +53,6 @@ body {
 }
 
 .contentdiv {
-    display: none;
     padding-top: 20px;
     margin-bottom: 20px;
 }
@@ -217,8 +216,12 @@ body {
     border: none;
 }
 
+#comments-form {
+    float: left;
+}
+
 #comments-board {
-    height: 50%;
+    min-height: 30%;
     margin-top: 30px;
     border: 2px solid #404E4D;
     padding: 10px;
@@ -233,7 +236,7 @@ body {
 
 #clear-button {
     width: 200px;
-    margin-top: 30px;
+    margin-top: 15px;
 }
 
 #max-selection {
@@ -241,4 +244,69 @@ body {
     background: #EBF6FF;
     color: #404E4D;
     border-style: solid;
+}
+
+a {
+    color: #EBF6FF;
+    text-decoration: none;
+}
+
+.comment {
+    display: flex;
+    line-height: 30px;
+    margin-bottom: 5px;
+}
+
+.comment-initial {
+    color: #EBF6FF;
+    background: #404E4D;
+    border-radius: 15px;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.comment-message {
+    max-width: 90%;
+}
+
+.comments-page-inc {
+    margin-top: 15px;
+}
+
+.comment-popup {
+    display: none;
+    font-size: 12px;
+    width: 100px;
+    background: #404E4D;
+    color: #EBF6FF;
+    opacity: 80%;
+    position: relative;
+    right: 35px;
+    z-index: 1;
+    bottom: 220%;
+    border-radius: 15px;
+}
+
+.comment-popup-text {
+    animation: fadeIn 4s cubic-bezier(0.19, 1.66, 0.82, 1.4);
+}
+
+@keyframes fadeIn {
+  0%,100% { opacity:0; }
+  50% { opacity:1; }
+}
+
+.popup-triangle {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+    opacity: 80%;
 }

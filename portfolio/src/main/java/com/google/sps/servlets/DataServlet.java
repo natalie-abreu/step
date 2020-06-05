@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 import com.google.gson.*;
+import com.google.sps.data.Comment;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -22,6 +23,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.QueryResultList;
+
 
 
 import java.io.IOException;
@@ -37,26 +40,39 @@ import java.util.List;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  static String dataType = "Comment";
-  static String commentTimestamp = "timestamp";
-  static String commentTitle = "title";
-  static String maxCommentsParam = "max";
+  static String MAX_COMMENTS_PARAM = "max";
+  static String PAGE_NUM_PARAM = "page";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    int numComments = getNumComments(request);
-    Query query = new Query(dataType).addSort(commentTimestamp, SortDirection.DESCENDING);
+    int pageSize = getNumComments(request);
+    int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
 
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
+
+    Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    List<String> comments = new ArrayList<>();
+    PreparedQuery pq = datastore.prepare(query);
 
-    for (Entity entity : results.asIterable(FetchOptions.Builder.withLimit(numComments))) {
+    QueryResultList<Entity> results;
+    results = pq.asQueryResultList(fetchOptions);
+
+    // page invalid
+    if (pageNum <= 0 || (pageNum != 1 && results.size() == 0)) {
+        System.out.println("PAGE " + pageNum + " INVALID");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+    }
+ 
+    List<Comment> comments = new ArrayList<>();
+    for (Entity entity : results) {
         long id = entity.getKey().getId();
-        String message = (String) entity.getProperty(commentTitle);
-        long timestamp = (long) entity.getProperty(commentTimestamp);
+        String author = (String) entity.getProperty(Comment.AUTHOR);
+        long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
+        String message = (String) entity.getProperty(Comment.CONTENT);
 
-        comments.add(message);
+        Comment comment = new Comment(id, author, timestamp, message);
+        comments.add(comment);
     }
 
     response.setContentType("application/json;");
@@ -66,27 +82,29 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String name = request.getParameter("name-input");
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
-      Entity commentEntity = new Entity(dataType);
-      commentEntity.setProperty(commentTitle, newComment);
-      commentEntity.setProperty(commentTimestamp, timestamp);
+      Entity commentEntity = new Entity(Comment.DATA_TYPE);
+      commentEntity.setProperty(Comment.CONTENT, newComment);
+      commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
+      commentEntity.setProperty(Comment.AUTHOR, name);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
 
-      response.sendRedirect("/index.html");
+      response.sendRedirect("/comments.html");
   }
 
-  private String convertToJsonUsingGson(List<String> messages) {
+  private String convertToJsonUsingGson(List<Comment> messages) {
       Gson gson = new Gson();
       String json = gson.toJson(messages);
       return json;
   }
 
   private int getNumComments(HttpServletRequest request) {
-      String userInput = request.getParameter(maxCommentsParam);
+      String userInput = request.getParameter(MAX_COMMENTS_PARAM);
       int numComments;
       try {
         numComments = Integer.parseInt(userInput);
