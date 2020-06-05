@@ -48,8 +48,7 @@ public class DataServlet extends HttpServlet {
     int pageSize = getNumComments(request);
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
 
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(PageNum-1));
-
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
     Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(query);
@@ -58,8 +57,9 @@ public class DataServlet extends HttpServlet {
     results = pq.asQueryResultList(fetchOptions);
 
     // page invalid
-    if (PageNum <= 0 || (PageNum != 1 && results.size() == 0)) {
-        System.out.println("PAGE " + PageNum + " INVALID");
+    if (pageNum <= 0 || (pageNum != 1 && results.size() == 0)) {
+        System.out.println("PAGE " + pageNum + " INVALID");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return;
     }
  
