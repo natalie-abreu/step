@@ -145,7 +145,7 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0) {
-    numComments = await restoreNumComments(numComments);
+    numComments = restoreNumComments(numComments);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
     const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
@@ -159,6 +159,7 @@ async function getComments(pageInc=0, numComments=0) {
         return;
     }
     let board = document.getElementById("comments-board");
+    setCommentBoardSize(numComments);
     board.innerText = '';
     for (msg of comments) {
         board.appendChild(createComment(msg));
@@ -223,11 +224,20 @@ function createCommentPopup(msg) {
     const popup = document.createElement('div');
     popup.className = "comment-popup";
     popup.id = msg.id + "-popup";
-    popup.innerHTML = `<p id=${msg.id}-popup-text-name class="comment-popup-text">${msg.name}</p>
-    <p id=${msg.id}-popup-text-date class="comment-popup-text" style="display:none">${msg_date}</p>
+    
+    popup.appendChild(createCommentPopupName(msg));
+    popup.innerHTML += `<p id=${msg.id}-popup-text-date class="comment-popup-text" style="display:none">${msg_date}</p>
     <div class="popup-triangle"></div>`;
     
     return popup;
+}
+
+function createCommentPopupName(msg) {
+    const popupTextName = document.createElement('p');
+    popupTextName.className = "comment-popup-text";
+    popupTextName.id = `${msg.id}-popup-text-name`;
+    popupTextName.innerText = msg.name;
+    return popupTextName;
 }
 
 async function clearComments() {
@@ -261,6 +271,13 @@ function getMaxFromStorage(numComments) {
     return numComments;
 }
 
+function setCommentBoardSize(numComments) {
+    const board = document.getElementById("comments-board");
+    if (numComments == 5) board.style.minHeight = "30%";
+    else if (numComments == 10) board.style.minHeight = "59%";
+    else board.style.minHeight = "118%";
+}
+
 function showCommentInfo(id) {
     id = id.split("-")[0]+"-popup";
     let popup = document.getElementById(id);
@@ -285,7 +302,6 @@ function toggleCommentInfo(time, popup, popupName, popupDate, name) {
             toggleCommentInfo(4000, popup, popupName, popupDate, !name);
         }
     }, time);
-    
 }
 
 function hideCommentInfo(id) {
