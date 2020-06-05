@@ -42,6 +42,7 @@ public class DataServlet extends HttpServlet {
 
   static String MAX_COMMENTS_PARAM = "max";
   static String PAGE_NUM_PARAM = "page";
+  int commentNum = 0;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,7 +50,6 @@ public class DataServlet extends HttpServlet {
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
-
     Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(query);
@@ -66,7 +66,7 @@ public class DataServlet extends HttpServlet {
  
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : results) {
-        long id = entity.getKey().getId();
+        long id = (long) entity.getProperty(Comment.ID);
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
@@ -90,6 +90,8 @@ public class DataServlet extends HttpServlet {
       commentEntity.setProperty(Comment.CONTENT, newComment);
       commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
       commentEntity.setProperty(Comment.AUTHOR, name);
+      commentEntity.setProperty(Comment.ID, commentNum);
+      commentNum++;
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);

@@ -26,17 +26,31 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+
+
+import com.google.sps.data.Comment;
 
 @WebServlet("/delete-data")
 public class DeleteDataServlet extends HttpServlet {
 
-    static String dataType = "Comment";
+    static String ID_PARAM = "id";
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query(dataType);
-
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+       
+        long id = Long.parseLong(request.getParameter(ID_PARAM));
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query query;
+        if (id != -1) {
+            query = new Query(Comment.DATA_TYPE).setFilter(new FilterPredicate("manual_id", FilterOperator.EQUAL, id));
+        }
+        else {
+            query = new Query(Comment.DATA_TYPE);
+        }
+
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {

@@ -156,7 +156,7 @@ async function getComments(pageInc=0, numComments=0) {
     } catch(e) {
         page_num-=1;
         console.log(e);
-        return;
+        return -1;
     }
     let board = document.getElementById("comments-board");
     setCommentBoardSize(numComments);
@@ -164,16 +164,42 @@ async function getComments(pageInc=0, numComments=0) {
     for (msg of comments) {
         board.appendChild(createComment(msg));
     }
+    return 0;
 }
 
 function createComment(msg) {
     const comment = document.createElement('div');
     comment.className = "comment";
+    comment.id = msg.id;
 
     comment.appendChild(createCommentInitial(msg));
     comment.appendChild(createCommentMessage(msg));
+    comment.appendChild(createCommentDeleteButton(msg));
+
+    comment.addEventListener("mouseover", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "block";
+    })
+
+    comment.addEventListener("mouseout", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "none";
+    })
 
     return comment;
+}
+
+function createCommentDeleteButton(msg) {
+    const x = document.createElement('div');
+    x.className = "comment-delete-btn";
+    x.id = msg.id+"-delete-btn";
+    x.innerHTML = "x&nbsp;&nbsp;&nbsp;";
+    x.addEventListener("click", ()=>{
+        deleteSingleComment(msg.id);
+    });
+    return x;
 }
 
 function createCommentMessage(msg) {
@@ -202,18 +228,36 @@ function createCommentPopup(msg) {
     const popup = document.createElement('div');
     popup.className = "comment-popup";
     popup.id = msg.id + "-popup";
-    popup.innerHTML = `<p id=${msg.id}-popup-text-name class="comment-popup-text">${msg.name}</p>
-    <p id=${msg.id}-popup-text-date class="comment-popup-text" style="display:none">${msg_date}</p>
+    
+    popup.appendChild(createCommentPopupName(msg));
+    popup.innerHTML += `<p id=${msg.id}-popup-text-date class="comment-popup-text" style="display:none">${msg_date}</p>
     <div class="popup-triangle"></div>`;
     
     return popup;
 }
 
+function createCommentPopupName(msg) {
+    const popupTextName = document.createElement('p');
+    popupTextName.className = "comment-popup-text";
+    popupTextName.id = `${msg.id}-popup-text-name`;
+    popupTextName.innerText = msg.name;
+    return popupTextName;
+}
+
 async function clearComments() {
     page_num = 0;
-    const request = new Request('/delete-data', {method: 'POST'});
+    const request = new Request('/delete-data?id=-1', {method: 'DELETE'});
     await fetch(request);
     getComments();
+}
+
+async function deleteSingleComment(id) {
+    const request = new Request(`/delete-data?id=${id}`, {method: 'DELETE'});
+    await fetch(request);
+    let result = await getComments();
+    if (result == -1) {
+        getComments();
+    }
 }
 
 function restoreNumComments(numComments) {
