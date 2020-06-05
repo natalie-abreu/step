@@ -156,7 +156,7 @@ async function getComments(pageInc=0, numComments=0) {
     } catch(e) {
         page_num-=1;
         console.log(e);
-        return;
+        return -1;
     }
     let board = document.getElementById("comments-board");
     setCommentBoardSize(numComments);
@@ -164,6 +164,7 @@ async function getComments(pageInc=0, numComments=0) {
     for (msg of comments) {
         board.appendChild(createComment(msg));
     }
+    return 0;
 }
 
 function createComment(msg) {
@@ -253,7 +254,10 @@ async function clearComments() {
 async function deleteSingleComment(id) {
     const request = new Request(`/delete-data?id=${id}`, {method: 'POST'});
     await fetch(request);
-    getComments();
+    let result = await getComments();
+    if (result == -1) {
+        getComments();
+    }
 }
 
 function restoreNumComments(numComments) {
