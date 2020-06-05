@@ -21,6 +21,7 @@ public final class Comment {
   public static String TIMESTAMP = "timestamp";
   public static String AUTHOR = "name";
   public static String CONTENT = "message";
+  public static String ID = "manual_id";
 
   private final long id;
   private final String name;

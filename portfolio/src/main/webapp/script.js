@@ -195,6 +195,9 @@ function createCommentDeleteButton(msg) {
     x.className = "comment-delete-btn";
     x.id = msg.id+"-delete-btn";
     x.innerHTML = "x&nbsp;&nbsp;&nbsp;";
+    x.addEventListener("click", ()=>{
+        deleteSingleComment(msg.id);
+    });
     return x;
 }
 
@@ -242,7 +245,13 @@ function createCommentPopupName(msg) {
 
 async function clearComments() {
     page_num = 0;
-    const request = new Request('/delete-data', {method: 'POST'});
+    const request = new Request('/delete-data?id=-1', {method: 'POST'});
+    await fetch(request);
+    getComments();
+}
+
+async function deleteSingleComment(id) {
+    const request = new Request(`/delete-data?id=${id}`, {method: 'POST'});
     await fetch(request);
     getComments();
 }
