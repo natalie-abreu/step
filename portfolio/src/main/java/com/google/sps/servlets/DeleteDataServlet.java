@@ -38,7 +38,7 @@ public class DeleteDataServlet extends HttpServlet {
     static String ID_PARAM = "id";
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
        
         long id = Long.parseLong(request.getParameter(ID_PARAM));
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

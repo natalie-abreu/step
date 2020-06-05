@@ -246,13 +246,13 @@ function createCommentPopupName(msg) {
 
 async function clearComments() {
     page_num = 0;
-    const request = new Request('/delete-data?id=-1', {method: 'POST'});
+    const request = new Request('/delete-data?id=-1', {method: 'DELETE'});
     await fetch(request);
     getComments();
 }
 
 async function deleteSingleComment(id) {
-    const request = new Request(`/delete-data?id=${id}`, {method: 'POST'});
+    const request = new Request(`/delete-data?id=${id}`, {method: 'DELETE'});
     await fetch(request);
     let result = await getComments();
     if (result == -1) {
