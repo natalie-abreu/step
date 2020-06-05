@@ -281,6 +281,7 @@ a {
     margin-left: auto;
     display: none;
     cursor: pointer;
+    opacity: .6;
 }
 
 .comments-page-inc {
