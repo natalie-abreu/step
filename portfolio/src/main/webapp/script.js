@@ -168,11 +168,33 @@ async function getComments(pageInc=0, numComments=0) {
 function createComment(msg) {
     const comment = document.createElement('div');
     comment.className = "comment";
+    comment.id = msg.id;
 
     comment.appendChild(createCommentInitial(msg));
     comment.appendChild(createCommentMessage(msg));
+    comment.appendChild(createCommentDeleteButton(msg));
+
+    comment.addEventListener("mouseover", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "block";
+    })
+
+    comment.addEventListener("mouseout", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "none";
+    })
 
     return comment;
+}
+
+function createCommentDeleteButton(msg) {
+    const x = document.createElement('div');
+    x.className = "comment-delete-btn";
+    x.id = msg.id+"-delete-btn";
+    x.innerHTML = "x&nbsp;&nbsp;&nbsp;";
+    return x;
 }
 
 function createCommentMessage(msg) {

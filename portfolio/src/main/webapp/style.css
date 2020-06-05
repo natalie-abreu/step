@@ -257,6 +257,10 @@ a {
     margin-bottom: 5px;
 }
 
+.comment:hover {
+    background: rgb(64, 78, 77, .02);
+}
+
 .comment-initial {
     color: #EBF6FF;
     background: #404E4D;
@@ -268,8 +272,15 @@ a {
     cursor: pointer;
 }
 
+
 .comment-message {
     max-width: 90%;
+}
+
+.comment-delete-btn {
+    margin-left: auto;
+    display: none;
+    cursor: pointer;
 }
 
 .comments-page-inc {
