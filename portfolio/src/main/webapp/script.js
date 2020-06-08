@@ -145,6 +145,7 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0) {
+    await checkLoginStatus();
     numComments = restoreNumComments(numComments);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
@@ -321,4 +322,29 @@ function hideCommentInfo(id) {
     id = id.split("-")[0]+"-popup";
     const popup = document.getElementById(id);
     popup.style.display = "none";
+}
+
+
+async function checkLoginStatus() {
+    const request = new Request('/login-status', {method: 'GET'});
+    const response = await fetch(request);
+
+    const json = await response.json();
+    const commentForm = document.getElementById("comments-form");
+    const loginBtn = document.getElementById("login-button");
+    if (json["loggedIn"] == "false") {
+        // display login link
+        commentForm.style.display = "none";
+        console.log("user not logged in");
+        loginBtn.innerText = "Login";
+    }
+    else {
+        commentForm.style.display = "block";
+        console.log("user logged in ");
+        loginBtn.innerText = "Logout";
+    }
+    
+    loginBtn.addEventListener("click", () => {
+        window.location = `../${json["url"]}`;
+    });
 }
