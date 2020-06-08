@@ -80,19 +80,11 @@ public class DataServlet extends HttpServlet {
     }
 
     response.setContentType("application/json;");
-    String commentsJson = convertCommentToJsonUsingGson(comments);
 
     UserService userService = UserServiceFactory.getUserService();
     User currentUser = userService.getCurrentUser();
-    String userJson = convertUserToJsonUsingGson(currentUser);
-    String json = "{";
-    json += "\"user\": ";
-    json += userJson;
-    json += ", ";
-    json += "\"comments\": ";
-    json += commentsJson;
-    json += "}";
-    System.out.println(json);
+
+    String json = convertToJson(comments, currentUser);
     response.getWriter().println(json);
   }
 
@@ -120,15 +112,32 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/comments.html");
   }
 
-  private String convertCommentToJsonUsingGson(List<Comment> messages) {
+  private String convertToJson(List<Comment> comments, User user) {
+      String userJson = convertUserToJsonUsingGson(user);
+      String commentsJson = convertCommentToJsonUsingGson(comments);
+      return mergeJson(userJson, commentsJson);
+  }
+
+  private String convertCommentToJsonUsingGson(List<Comment> comments) {
       Gson gson = new Gson();
-      String json = gson.toJson(messages);
+      String json = gson.toJson(comments);
       return json;
   }
 
   private String convertUserToJsonUsingGson(User user) {
       Gson gson = new Gson();
       String json = gson.toJson(user);
+      return json;
+  }
+
+  private String mergeJson(String user, String comments) {
+      String json = "{";
+      json += "\"user\": ";
+      json += user;
+      json += ", ";
+      json += "\"comments\": ";
+      json += comments;
+      json += "}";
       return json;
   }
 

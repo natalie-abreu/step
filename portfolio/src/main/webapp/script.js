@@ -154,7 +154,6 @@ async function getComments(pageInc=0, numComments=0) {
     let result;
     try {
         result = await response.json();
-        console.log(result);
     } catch(e) {
         page_num-=1;
         console.log(e);
