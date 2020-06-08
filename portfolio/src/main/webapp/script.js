@@ -333,14 +333,11 @@ async function checkLoginStatus() {
     const commentForm = document.getElementById("comments-form");
     const loginBtn = document.getElementById("login-button");
     if (json["loggedIn"] == "false") {
-        // display login link
         commentForm.style.display = "none";
-        console.log("user not logged in");
         loginBtn.innerText = "Login";
     }
     else {
         commentForm.style.display = "block";
-        console.log("user logged in ");
         loginBtn.innerText = "Logout";
     }
     

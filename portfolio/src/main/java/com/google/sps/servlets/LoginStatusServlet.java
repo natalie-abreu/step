@@ -39,21 +39,12 @@ public class LoginStatusServlet extends HttpServlet {
       String urlToRedirectToAfterUserLogsOut = "/comments.html";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
-      System.out.println("USER LOGGED IN");
-
       List<String> res = new ArrayList<String>();
       res.add("true");
       res.add(logoutUrl);
 
       String json = convertToJson(res);
       response.getWriter().println(json);
-
-      System.out.println(json);
-
-    //   response.getWriter().println(logoutUrl);
-
-    //   response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-    //   response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
       String urlToRedirectToAfterUserLogsIn = "/comments.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
@@ -62,16 +53,8 @@ public class LoginStatusServlet extends HttpServlet {
       res.add("false");
       res.add(loginUrl);
 
-    //   response.getWriter().println(loginUrl);
-      System.out.println("USER LOGGED OUT");
-
       String json = convertToJson(res);
       response.getWriter().println(json);
-
-      System.out.println(json);
-
-    //   response.getWriter().println("<p>Hello stranger.</p>");
-    //   response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
     }
   }
   private String convertToJson(List<String> info) {
