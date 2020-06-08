@@ -58,7 +58,7 @@ public class LoginStatusServlet extends HttpServlet {
     }
   }
   private String convertToJson(List<String> info) {
-       String json = "{";
+    String json = "{";
     json += "\"loggedIn\": ";
     json += "\"" + info.get(0) + "\"";
     json += ", ";
