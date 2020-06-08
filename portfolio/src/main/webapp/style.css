@@ -191,9 +191,6 @@ body {
     height: 80%;
 }
 
-#comments-form {
-    width: 50%;
-}
 
 #submit-button {
     background: #404E4D;
@@ -216,9 +213,24 @@ body {
     border: none;
 }
 
+#comments-div {
+    display: flex;
+}
+
+#left-side-comments {
+    display: flex;
+    width: 40%;
+    flex-direction: column;
+}
+
 #comments-form {
     float: left;
     display: none;
+    width: 50%;
+}
+
+#login-button {
+    margin-top: 15px;
 }
 
 #comments-board {
