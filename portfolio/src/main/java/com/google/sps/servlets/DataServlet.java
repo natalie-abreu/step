@@ -98,7 +98,6 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    //   String name = request.getParameter("name-input");
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 

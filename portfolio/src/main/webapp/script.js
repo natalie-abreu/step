@@ -164,19 +164,19 @@ async function getComments(pageInc=0, numComments=0) {
     setCommentBoardSize(numComments);
     board.innerText = '';
     for (msg of result["comments"]) {
-        board.appendChild(createComment(result["user"]["userId"], msg));
+        board.appendChild(createComment(result["user"], msg));
     }
     return 0;
 }
 
-function createComment(userId, msg) {
+function createComment(user, msg) {
     const comment = document.createElement('div');
     comment.className = "comment";
     comment.id = msg.id;
 
     comment.appendChild(createCommentInitial(msg));
     comment.appendChild(createCommentMessage(msg));
-    if (userId == msg["user_id"]) {
+    if (user && user["userId"] == msg["user_id"]) {
         comment.appendChild(createCommentDeleteButton(msg));
 
         comment.addEventListener("mouseover", ()=> {
@@ -246,7 +246,8 @@ function createCommentPopupName(msg) {
     const popupTextName = document.createElement('p');
     popupTextName.className = "comment-popup-text";
     popupTextName.id = `${msg.id}-popup-text-name`;
-    popupTextName.innerText = msg.name;
+    const name = msg.name.split("@")[0];
+    popupTextName.innerText = name;
     return popupTextName;
 }
 
