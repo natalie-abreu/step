@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDG7nV2ZDvBkTfxU1IA8Dgw9cONJWT8jY0"></script>
     <script src="script.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
@@ -11,10 +12,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-
   </head>
-  <body>
+  <body onload="createMap('usc');">
     <div id="header">
         <h1>Hi!</h1>
         <div id="tabs">
@@ -26,22 +25,14 @@
         </div>
     </div>
     <div id="content">
-        <div id="pictures-div" class="contentdiv">
-            <div id="slides-title-container">
-                <img class="arrow title-arrow" src='/images/prev.png' alt='prev' onclick="changeShow(-1)">
-                <div id="slides-title" class ="pictures">
-                    <p>Baking</p>
-                </div>
-                <img class="arrow title-arrow" src='/images/next.png' alt='next' onclick="changeShow(1)">
-            </div>
-            <div id="slideshow-container-container">
-                <img class="arrow" src='/images/prev.png' alt='prev' onclick="changeSlides(-1)">
-                <div id="slideshow-container">
-                    <div class='slides' style='display:block'> 
-                        <img id='slide-img' src='/images/b1.jpg' style='width:300px; height:400px; object-fit: cover;'>
-                    </div>
-                </div>
-                <img class="arrow" src='/images/next.png' alt='next' onclick="changeSlides(1)">
-            </div>
+        <select class="button" name="map-area-selection" id="map-area-selection" onchange="createMap(this.value)">
+            <option value="usc">USC</option>
+            <option value="hp">Highland Park IL</option>
+        </select>
+        <div id="map-div" class="content-div">
+            <div id="map"></div>
+            <div id="street-view"></div>
         </div>
     </div>
+  </body>
+</html>
