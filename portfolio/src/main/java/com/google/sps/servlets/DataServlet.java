@@ -50,15 +50,17 @@ public class DataServlet extends HttpServlet {
 
   static String MAX_COMMENTS_PARAM = "max";
   static String PAGE_NUM_PARAM = "page";
+  static String SORT_BY_PARAM = "sort";
   int commentNum = 0;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int pageSize = getNumComments(request);
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
+    String sortBy = request.getParameter(SORT_BY_PARAM);
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
-    Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
+    Query query = new Query(Comment.DATA_TYPE).addSort(sortBy, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(query);
 
@@ -163,16 +165,12 @@ public class DataServlet extends HttpServlet {
   }
 
   private double analyzeSentiment(String message) throws IOException {
-    //   String message = request.getParameter("message");
-
       Document doc =
         Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
       LanguageServiceClient languageService = LanguageServiceClient.create();
       Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
       double score = sentiment.getScore();
       languageService.close();
-      System.out.println("SENTIMENT SCORE OF " + message + ": " + score);
-
       return score;
   }
 }

@@ -42,6 +42,10 @@
                         <option value=10>10</option>
                         <option value=20>20</option>
                     </select>
+                    <select class="button" name="sort-comments" id="sort-comments-selection" onchange="getComments(pageInc=0, numComments=0, sortBy=this.value)">
+                        <option value="timestamp">Most Recent</option>
+                        <option value="sentiment_score">Most Positive</option>
+                    </select>
                     <div id="comments-board">
                     </div>
                     <button id="prev-comments" class="comments-page-inc" type="button" onclick="getComments(pageInc=-1)">Prev Page</button>

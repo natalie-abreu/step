@@ -252,11 +252,15 @@ body {
     margin-top: 15px;
 }
 
-#max-selection {
+#max-selection, #sort-comments-selection {
     border: 2px #404E4D;
     background: #EBF6FF;
     color: #404E4D;
     border-style: solid;
+}
+
+#sort-comments-selection {
+    width: 130px;
 }
 
 a {
@@ -295,6 +299,10 @@ a {
     display: none;
     cursor: pointer;
     opacity: .6;
+}
+
+.emoji {
+    margin-left: auto;
 }
 
 .comments-page-inc {
