@@ -144,10 +144,11 @@ function toggleProjectOff(id) {
 }
 
 let page_num = 1;
-async function getComments(pageInc=0, numComments=0, sortBy="timestamp") {
+async function getComments(pageInc=0, numComments=0, sortBy="") {
     console.log(sortBy);
     await checkLoginStatus();
     numComments = restoreNumComments(numComments);
+    sortBy = restoreSort(sortBy);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
     const response = await fetch(`/data?max=${numComments}&page=${page_num}&sort=${sortBy}`);
@@ -200,7 +201,7 @@ function createCommentDeleteButton(msg) {
     const x = document.createElement('div');
     x.className = "comment-delete-btn";
     x.id = msg.id+"-delete-btn";
-    x.innerHTML = "x&nbsp;&nbsp;&nbsp;";
+    x.innerHTML = "x&nbsp;&nbsp;";
     x.addEventListener("click", ()=>{
         deleteSingleComment(msg.id);
     });
@@ -308,6 +309,29 @@ function getMaxFromStorage(numComments) {
         sessionStorage.numComments = numComments;
     }
     return numComments;
+}
+
+function restoreSort(sortBy) {
+    // prevent resetting of dropdown selection on refresh/submit
+    let sortBySelection = document.getElementById("sort-comments-selection");
+    sortBy = getSortFromStorage(sortBy);
+    sortBySelection.value = sortBy;
+    return sortBy;
+}
+
+
+function getSortFromStorage(sortBy) {
+    if (sortBy == "") {
+        if (!sessionStorage.sortBy) {
+            sortBy = "timestamp";
+            sessionStorage.sortBy = sortBy;
+        }
+        else sortBy = sessionStorage.sortBy;
+    }
+    else {
+        sessionStorage.sortBy = sortBy;
+    }
+    return sortBy;
 }
 
 function setCommentBoardSize(numComments) {
