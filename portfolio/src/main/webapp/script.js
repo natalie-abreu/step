@@ -351,3 +351,109 @@ async function checkLoginStatus() {
         window.location = json["url"];
     });
 }
+
+let geocoder;
+let map;
+let panorama;
+let sv;
+
+/** Creates a map and adds it to the page. */
+function createMap(center) {
+  geocoder = new google.maps.Geocoder();
+
+  sv = new google.maps.StreetViewService();
+  panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
+
+  if (center == "usc") createUSCMap();
+  else createHPMap();
+}
+
+function createUSCMap() {
+  const usc = {lat: 34.0223519, lng: -118.2873057};
+
+  map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: usc, zoom: 16});
+  sv.getPanorama({location: usc, radius: 50}, processSVData);
+
+  const bakedBear = {lat: 34.025022485125334, lng: -118.28533725561974};
+  const tcc = {lat: 34.0203071, lng:-118.2860911};
+  const tommyTrojan = {lat: 34.0203229, lng: -118.2854093};
+  const sal = {lat: 34.01945, lng: -118.289145};
+  const fertitta = {lat: 34.0189079, lng: -118.2825777};
+
+  addMarker("Baked Bear", bakedBear, "Really good ice cream sandwiches");
+  addMarker("Campus Center", tcc, "Where to get food & (more importantly) coffee");
+  addMarker("Tommy Trojan", tommyTrojan, "Tommy Trojan, of course");
+  addMarker("SAL", sal, "Where CS kids spend hours debugging");
+  addMarker("Fertitta", fertitta, "Fancy building for the business kids");
+}
+
+function createHPMap() {
+    const hp = {lat: 42.1767167, lng: -87.7960146};
+
+    map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: hp, zoom: 13});
+    sv.getPanorama({location: hp, radius: 50}, processSVData);
+
+    const hphs = {lat: 42.1922954, lng: -87.8009056};
+    const lfg = {lat: 42.1849674, lng: -87.7980549};
+    const rosewood = {lat: 42.1670046, lng: -87.7685842};
+    const homeAloneHouse = {lat: 42.1097311, lng: -87.7336786};
+    const bobolink = {lat: 42.1762734, lng: -87.8030299};
+
+    addMarker("Highland Park High School", hphs, "Where I went to high school");
+    addMarker("That Little French Guy", lfg, "Cafe with really good eclairs");
+    addMarker("Rosewood Beach", rosewood, "Rosewood Beach");
+    addMarker("Home Alone House", homeAloneHouse, "Not quite in Highland Park, but the house where Home Alone was filmed");
+    addMarker("Bob-O-Link Rd", bobolink, "Broke my wrist here");
+}
+
+function addMarker(title, loc, content) {
+    const marker = new google.maps.Marker({position: loc, map: map, title: title});
+    const infowindow = new google.maps.InfoWindow({
+        content: content
+    });  
+    marker.addListener('click', function() {
+        console.log(marker.getPosition());
+        map.setZoom(20);
+        map.setCenter(marker.getPosition());
+        infowindow.open(map, marker);
+        sv.getPanorama({location: marker.getPosition(), radius: 50}, processSVData);
+    });
+    map.addListener('zoom_changed', function() {
+      infowindow.close();
+    })
+}
+
+function processSVData(data, status) {
+  if (status === 'OK') {
+    var marker = new google.maps.Marker({
+      position: data.location.latLng,
+      map: map,
+      title: data.location.description
+    });
+
+    panorama.setPano(data.location.pano);
+    panorama.setPov({
+      heading: 270,
+      pitch: 0
+    });
+    panorama.setVisible(true);
+
+    marker.addListener('click', function() {
+      var markerPanoID = data.location.pano;
+      // Set the Pano to use the passed panoID.
+      panorama.setPano(markerPanoID);
+      panorama.setPov({
+        heading: 270,
+        pitch: 0
+      });
+      panorama.setVisible(true);
+    });
+    marker.setMap(null);
+  } else {
+    console.error('Street View data not found for this location.');
+  }
+}
