@@ -38,6 +38,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
+import java.io.IOException;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -73,9 +78,10 @@ public class DataServlet extends HttpServlet {
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
-        String user_id = (String) entity.getProperty(Comment.USER_ID);
+        String userId = (String) entity.getProperty(Comment.USER_ID);
+        double sentimentScore = (double) entity.getProperty(Comment.SENTIMENT_SCORE);
 
-        Comment comment = new Comment(id, author, timestamp, message, user_id);
+        Comment comment = new Comment(id, author, timestamp, message, userId, sentimentScore);
         comments.add(comment);
     }
 
@@ -95,15 +101,17 @@ public class DataServlet extends HttpServlet {
 
       UserService userService = UserServiceFactory.getUserService();
       User currentUser = userService.getCurrentUser();
-      String user_id = currentUser.getUserId();
+      String userId = currentUser.getUserId();
       String name = currentUser.getNickname();
+      double sentimentScore = analyzeSentiment(newComment);
 
       Entity commentEntity = new Entity(Comment.DATA_TYPE);
       commentEntity.setProperty(Comment.CONTENT, newComment);
       commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
       commentEntity.setProperty(Comment.AUTHOR, name);
       commentEntity.setProperty(Comment.ID, commentNum);
-      commentEntity.setProperty(Comment.USER_ID, user_id);
+      commentEntity.setProperty(Comment.USER_ID, userId);
+      commentEntity.setProperty(Comment.SENTIMENT_SCORE, sentimentScore);
       commentNum++;
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -152,5 +160,19 @@ public class DataServlet extends HttpServlet {
         return 5;
       }
       return numComments;
+  }
+
+  private double analyzeSentiment(String message) throws IOException {
+    //   String message = request.getParameter("message");
+
+      Document doc =
+        Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+      LanguageServiceClient languageService = LanguageServiceClient.create();
+      Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+      double score = sentiment.getScore();
+      languageService.close();
+      System.out.println("SENTIMENT SCORE OF " + message + ": " + score);
+
+      return score;
   }
 }

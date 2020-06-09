@@ -406,7 +406,6 @@ function createHPMap() {
     addMarker("Highland Park High School", hphs, "Where I went to high school");
     addMarker("That Little French Guy", lfg, "Cafe with really good eclairs");
     addMarker("Rosewood Beach", rosewood, "Rosewood Beach");
-    addMarker("Home Alone House", homeAloneHouse, "Not quite in Highland Park, but the house where Home Alone was filmed");
     addMarker("Bob-O-Link Rd", bobolink, "Broke my wrist here");
 }
 
