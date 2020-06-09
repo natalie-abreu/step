@@ -22,16 +22,19 @@ public final class Comment {
   public static String AUTHOR = "name";
   public static String CONTENT = "message";
   public static String ID = "manual_id";
+  public static String USER_ID = "user_id";
 
   private final long id;
   private final String name;
   private final long timestamp;
   private final String message;
+  private final String user_id;
 
-  public Comment(long id, String name, long timestamp, String message) {
+  public Comment(long id, String name, long timestamp, String message, String user_id) {
     this.id = id;
     this.name = name;
     this.timestamp = timestamp;
     this.message = message;
+    this.user_id = user_id;
   }
 }

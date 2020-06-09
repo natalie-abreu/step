@@ -25,7 +25,9 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.QueryResultList;
 
-
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.User;
 
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -70,27 +73,37 @@ public class DataServlet extends HttpServlet {
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
+        String user_id = (String) entity.getProperty(Comment.USER_ID);
 
-        Comment comment = new Comment(id, author, timestamp, message);
+        Comment comment = new Comment(id, author, timestamp, message, user_id);
         comments.add(comment);
     }
 
     response.setContentType("application/json;");
-    String json = convertToJsonUsingGson(comments);
+
+    UserService userService = UserServiceFactory.getUserService();
+    User currentUser = userService.getCurrentUser();
+
+    String json = convertToJson(comments, currentUser);
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      String name = request.getParameter("name-input");
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
+
+      UserService userService = UserServiceFactory.getUserService();
+      User currentUser = userService.getCurrentUser();
+      String user_id = currentUser.getUserId();
+      String name = currentUser.getNickname();
 
       Entity commentEntity = new Entity(Comment.DATA_TYPE);
       commentEntity.setProperty(Comment.CONTENT, newComment);
       commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
       commentEntity.setProperty(Comment.AUTHOR, name);
       commentEntity.setProperty(Comment.ID, commentNum);
+      commentEntity.setProperty(Comment.USER_ID, user_id);
       commentNum++;
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -99,9 +112,32 @@ public class DataServlet extends HttpServlet {
       response.sendRedirect("/comments.html");
   }
 
-  private String convertToJsonUsingGson(List<Comment> messages) {
+  private String convertToJson(List<Comment> comments, User user) {
+      String userJson = convertUserToJsonUsingGson(user);
+      String commentsJson = convertCommentToJsonUsingGson(comments);
+      return mergeJson(userJson, commentsJson);
+  }
+
+  private String convertCommentToJsonUsingGson(List<Comment> comments) {
       Gson gson = new Gson();
-      String json = gson.toJson(messages);
+      String json = gson.toJson(comments);
+      return json;
+  }
+
+  private String convertUserToJsonUsingGson(User user) {
+      Gson gson = new Gson();
+      String json = gson.toJson(user);
+      return json;
+  }
+
+  private String mergeJson(String user, String comments) {
+      String json = "{";
+      json += "\"user\": ";
+      json += user;
+      json += ", ";
+      json += "\"comments\": ";
+      json += comments;
+      json += "}";
       return json;
   }
 

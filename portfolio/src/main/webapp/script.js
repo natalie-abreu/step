@@ -145,14 +145,15 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0) {
+    await checkLoginStatus();
     numComments = restoreNumComments(numComments);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
     const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
     // will catch case when page is out of bounds
-    let comments;
+    let result;
     try {
-        comments = await response.json();
+        result = await response.json();
     } catch(e) {
         page_num-=1;
         console.log(e);
@@ -161,32 +162,36 @@ async function getComments(pageInc=0, numComments=0) {
     let board = document.getElementById("comments-board");
     setCommentBoardSize(numComments);
     board.innerText = '';
-    for (msg of comments) {
-        board.appendChild(createComment(msg));
+    for (msg of result["comments"]) {
+        board.appendChild(createComment(result["user"], msg));
     }
     return 0;
 }
 
-function createComment(msg) {
+function createComment(user, msg) {
     const comment = document.createElement('div');
     comment.className = "comment";
     comment.id = msg.id;
 
     comment.appendChild(createCommentInitial(msg));
     comment.appendChild(createCommentMessage(msg));
-    comment.appendChild(createCommentDeleteButton(msg));
+    if (user && user["userId"] == msg["user_id"]) {
+        comment.appendChild(createCommentDeleteButton(msg));
 
-    comment.addEventListener("mouseover", ()=> {
+        comment.addEventListener("mouseover", ()=> {
         const id = comment.id+"-delete-btn";
         const x = document.getElementById(id);
         x.style.display = "block";
-    })
+        })
 
-    comment.addEventListener("mouseout", ()=> {
+        comment.addEventListener("mouseout", ()=> {
         const id = comment.id+"-delete-btn";
         const x = document.getElementById(id);
         x.style.display = "none";
-    })
+        })
+    }
+
+    
 
     return comment;
 }
@@ -240,7 +245,8 @@ function createCommentPopupName(msg) {
     const popupTextName = document.createElement('p');
     popupTextName.className = "comment-popup-text";
     popupTextName.id = `${msg.id}-popup-text-name`;
-    popupTextName.innerText = msg.name;
+    const name = msg.name.split("@")[0];
+    popupTextName.innerText = name;
     return popupTextName;
 }
 
@@ -321,4 +327,27 @@ function hideCommentInfo(id) {
     id = id.split("-")[0]+"-popup";
     const popup = document.getElementById(id);
     popup.style.display = "none";
+}
+
+
+async function checkLoginStatus() {
+    const request = new Request('/login-status', {method: 'GET'});
+    const response = await fetch(request);
+
+    const json = await response.json();
+    const commentForm = document.getElementById("comments-form");
+    const loginBtn = document.getElementById("login-button");
+    if (json["loggedIn"] == "false") {
+        commentForm.style.display = "none";
+        loginBtn.innerText = "Login";
+    }
+    else {
+        commentForm.style.display = "block";
+        loginBtn.innerText = "Logout";
+    }
+    
+    loginBtn.addEventListener("click", () => {
+        // window.location = `../${json["url"]}`;
+        window.location = json["url"];
+    });
 }
