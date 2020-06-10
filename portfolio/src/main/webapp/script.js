@@ -145,7 +145,6 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0, sortBy="", lang="") {
-    console.log(sortBy);
     await checkLoginStatus();
     numComments = restoreNumComments(numComments);
     sortBy = restoreSort(sortBy);
@@ -167,7 +166,6 @@ async function getComments(pageInc=0, numComments=0, sortBy="", lang="") {
     board.innerText = '';
     for (msg of result["comments"]) {
         board.appendChild(createComment(result["user"], msg));
-        console.log(msg);
     }
     return 0;
 }
