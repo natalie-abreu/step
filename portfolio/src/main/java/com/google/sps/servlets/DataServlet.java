@@ -87,9 +87,10 @@ public class DataServlet extends HttpServlet {
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
-        message = translateMessage(languageCode, message);
+        // message = translateMessage(languageCode, message);
         String userId = (String) entity.getProperty(Comment.USER_ID);
-        double sentimentScore = (double) entity.getProperty(Comment.SENTIMENT_SCORE);
+        // double sentimentScore = (double) entity.getProperty(Comment.SENTIMENT_SCORE);
+        double sentimentScore = 0;
 
         Comment comment = new Comment(id, author, timestamp, message, userId, sentimentScore);
         comments.add(comment);
