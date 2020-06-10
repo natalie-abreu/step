@@ -144,12 +144,14 @@ function toggleProjectOff(id) {
 }
 
 let page_num = 1;
-async function getComments(pageInc=0, numComments=0) {
+async function getComments(pageInc=0, numComments=0, sortBy="") {
+    console.log(sortBy);
     await checkLoginStatus();
     numComments = restoreNumComments(numComments);
+    sortBy = restoreSort(sortBy);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
-    const response = await fetch(`/data?max=${numComments}&page=${page_num}`);
+    const response = await fetch(`/data?max=${numComments}&page=${page_num}&sort=${sortBy}`);
     // will catch case when page is out of bounds
     let result;
     try {
@@ -175,36 +177,55 @@ function createComment(user, msg) {
 
     comment.appendChild(createCommentInitial(msg));
     comment.appendChild(createCommentMessage(msg));
+    comment.appendChild(createCommentExpression(msg));
     if (user && user["userId"] == msg["user_id"]) {
         comment.appendChild(createCommentDeleteButton(msg));
-
-        comment.addEventListener("mouseover", ()=> {
-        const id = comment.id+"-delete-btn";
-        const x = document.getElementById(id);
-        x.style.display = "block";
-        })
-
-        comment.addEventListener("mouseout", ()=> {
-        const id = comment.id+"-delete-btn";
-        const x = document.getElementById(id);
-        x.style.display = "none";
-        })
+        addMouseOverCommentEvent(comment);
+        addMouseOutCommentEvent(comment);
     }
-
-    
-
     return comment;
+}
+
+function createCommentExpression(msg) {
+    const emojis = ["😄", "😐", "😔"];
+    const emoji = document.createElement('div');
+    emoji.className = "emoji";
+    emoji.id = msg.id+"-emoji";
+    if (msg["sentiment_score"] > 0) emoji.innerText = emojis[0];
+    else if (msg["sentiment_score"] < 0) emoji.innerText = emojis[2];
+    else emoji.innerText = emojis[1];
+    return emoji;
 }
 
 function createCommentDeleteButton(msg) {
     const x = document.createElement('div');
     x.className = "comment-delete-btn";
     x.id = msg.id+"-delete-btn";
-    x.innerHTML = "x&nbsp;&nbsp;&nbsp;";
+    x.innerHTML = "x&nbsp;&nbsp;";
     x.addEventListener("click", ()=>{
         deleteSingleComment(msg.id);
     });
     return x;
+}
+
+function addMouseOverCommentEvent(comment) {
+    comment.addEventListener("mouseover", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "block";
+        const emoji = document.getElementById(comment.id+"-emoji");
+        emoji.style.display = "none";
+    })
+}
+
+function addMouseOutCommentEvent(comment) {
+     comment.addEventListener("mouseout", ()=> {
+        const id = comment.id+"-delete-btn";
+        const x = document.getElementById(id);
+        x.style.display = "none";
+        const emoji = document.getElementById(comment.id+"-emoji");
+        emoji.style.display = "block";
+    })
 }
 
 function createCommentMessage(msg) {
@@ -288,6 +309,29 @@ function getMaxFromStorage(numComments) {
         sessionStorage.numComments = numComments;
     }
     return numComments;
+}
+
+function restoreSort(sortBy) {
+    // prevent resetting of dropdown selection on refresh/submit
+    let sortBySelection = document.getElementById("sort-comments-selection");
+    sortBy = getSortFromStorage(sortBy);
+    sortBySelection.value = sortBy;
+    return sortBy;
+}
+
+
+function getSortFromStorage(sortBy) {
+    if (sortBy == "") {
+        if (!sessionStorage.sortBy) {
+            sortBy = "timestamp";
+            sessionStorage.sortBy = sortBy;
+        }
+        else sortBy = sessionStorage.sortBy;
+    }
+    else {
+        sessionStorage.sortBy = sortBy;
+    }
+    return sortBy;
 }
 
 function setCommentBoardSize(numComments) {
@@ -406,7 +450,6 @@ function createHPMap() {
     addMarker("Highland Park High School", hphs, "Where I went to high school");
     addMarker("That Little French Guy", lfg, "Cafe with really good eclairs");
     addMarker("Rosewood Beach", rosewood, "Rosewood Beach");
-    addMarker("Home Alone House", homeAloneHouse, "Not quite in Highland Park, but the house where Home Alone was filmed");
     addMarker("Bob-O-Link Rd", bobolink, "Broke my wrist here");
 }
 

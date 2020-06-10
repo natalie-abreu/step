@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.QueryResultList;
+import com.google.appengine.api.datastore.Key;
 
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.users.UserService;
@@ -38,6 +39,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
+import java.io.IOException;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -45,20 +51,22 @@ public class DataServlet extends HttpServlet {
 
   static String MAX_COMMENTS_PARAM = "max";
   static String PAGE_NUM_PARAM = "page";
-  int commentNum = 0;
+  static String SORT_BY_PARAM = "sort";
+  static String COMMENT_NUM = "CommentNum";
+  static String COMMENT_NUM_VALUE = "value";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     int pageSize = getNumComments(request);
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
+    String sortBy = request.getParameter(SORT_BY_PARAM);
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
-    Query query = new Query(Comment.DATA_TYPE).addSort(Comment.TIMESTAMP, SortDirection.DESCENDING);
+    Query query = new Query(Comment.DATA_TYPE).addSort(sortBy, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery pq = datastore.prepare(query);
 
-    QueryResultList<Entity> results;
-    results = pq.asQueryResultList(fetchOptions);
+    QueryResultList<Entity> results = pq.asQueryResultList(fetchOptions);
 
     // page invalid
     if (pageNum <= 0 || (pageNum != 1 && results.size() == 0)) {
@@ -73,9 +81,10 @@ public class DataServlet extends HttpServlet {
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
-        String user_id = (String) entity.getProperty(Comment.USER_ID);
+        String userId = (String) entity.getProperty(Comment.USER_ID);
+        double sentimentScore = (double) entity.getProperty(Comment.SENTIMENT_SCORE);
 
-        Comment comment = new Comment(id, author, timestamp, message, user_id);
+        Comment comment = new Comment(id, author, timestamp, message, userId, sentimentScore);
         comments.add(comment);
     }
 
@@ -93,20 +102,41 @@ public class DataServlet extends HttpServlet {
       String newComment = request.getParameter("user-input");
       long timestamp = System.currentTimeMillis();
 
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+      Query query = new Query(COMMENT_NUM);
+      PreparedQuery pq = datastore.prepare(query);
+      QueryResultList<Entity> commentNumResult = pq.asQueryResultList(FetchOptions.Builder.withDefaults());
+
+      Entity commentNumEntity;
+      long commentNumValue;
+      if (commentNumResult.size() == 0) {
+          commentNumEntity = new Entity(COMMENT_NUM);
+          commentNumValue = 0;
+          commentNumEntity.setProperty(COMMENT_NUM_VALUE, commentNumValue);
+          datastore.put(commentNumEntity);      
+      }
+      else {
+          commentNumEntity = commentNumResult.get(0);
+          commentNumValue = (long)commentNumEntity.getProperty(COMMENT_NUM_VALUE)+1;
+          commentNumEntity.setProperty(COMMENT_NUM_VALUE, commentNumValue);
+          datastore.put(commentNumEntity);
+      }
+
       UserService userService = UserServiceFactory.getUserService();
       User currentUser = userService.getCurrentUser();
-      String user_id = currentUser.getUserId();
+      String userId = currentUser.getUserId();
       String name = currentUser.getNickname();
+      double sentimentScore = analyzeSentiment(newComment);
 
       Entity commentEntity = new Entity(Comment.DATA_TYPE);
       commentEntity.setProperty(Comment.CONTENT, newComment);
       commentEntity.setProperty(Comment.TIMESTAMP, timestamp);
       commentEntity.setProperty(Comment.AUTHOR, name);
-      commentEntity.setProperty(Comment.ID, commentNum);
-      commentEntity.setProperty(Comment.USER_ID, user_id);
-      commentNum++;
+      commentEntity.setProperty(Comment.ID, commentNumValue);
+      commentEntity.setProperty(Comment.USER_ID, userId);
+      commentEntity.setProperty(Comment.SENTIMENT_SCORE, sentimentScore);
 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
 
       response.sendRedirect("/comments.html");
@@ -152,5 +182,15 @@ public class DataServlet extends HttpServlet {
         return 5;
       }
       return numComments;
+  }
+
+  private double analyzeSentiment(String message) throws IOException {
+      Document doc =
+        Document.newBuilder().setContent(message).setType(Document.Type.PLAIN_TEXT).build();
+      LanguageServiceClient languageService = LanguageServiceClient.create();
+      Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+      double score = sentiment.getScore();
+      languageService.close();
+      return score;
   }
 }
