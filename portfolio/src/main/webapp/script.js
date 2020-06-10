@@ -145,7 +145,7 @@ function toggleProjectOff(id) {
 
 let page_num = 1;
 async function getComments(pageInc=0, numComments=0, sortBy="", lang="") {
-    await fetchBlobstoreUrlAndShowForm();
+    console.log(sortBy);
     await checkLoginStatus();
     numComments = restoreNumComments(numComments);
     sortBy = restoreSort(sortBy);
@@ -167,6 +167,7 @@ async function getComments(pageInc=0, numComments=0, sortBy="", lang="") {
     board.innerText = '';
     for (msg of result["comments"]) {
         board.appendChild(createComment(result["user"], msg));
+        console.log(msg);
     }
     return 0;
 }
@@ -522,11 +523,4 @@ function processSVData(data, status) {
   } else {
     console.error('Street View data not found for this location.');
   }
-}
-
-async function fetchBlobstoreUrlAndShowForm() {
-    let response = await fetch('blobstore-upload-url');
-    let url = await response.text();
-    const commentsForm = document.getElementById('comments-form');
-    commentsForm.action = url;
 }
