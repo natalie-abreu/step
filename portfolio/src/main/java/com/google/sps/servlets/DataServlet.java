@@ -44,6 +44,10 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import java.io.IOException;
 
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
+
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -52,6 +56,7 @@ public class DataServlet extends HttpServlet {
   static String MAX_COMMENTS_PARAM = "max";
   static String PAGE_NUM_PARAM = "page";
   static String SORT_BY_PARAM = "sort";
+  static String LANGUAGE_PARAM = "lang";
   static String COMMENT_NUM = "CommentNum";
   static String COMMENT_NUM_VALUE = "value";
 
@@ -60,6 +65,7 @@ public class DataServlet extends HttpServlet {
     int pageSize = getNumComments(request);
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
     String sortBy = request.getParameter(SORT_BY_PARAM);
+    String languageCode = request.getParameter(LANGUAGE_PARAM);
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
     Query query = new Query(Comment.DATA_TYPE).addSort(sortBy, SortDirection.DESCENDING);
@@ -81,6 +87,7 @@ public class DataServlet extends HttpServlet {
         String author = (String) entity.getProperty(Comment.AUTHOR);
         long timestamp = (long) entity.getProperty(Comment.TIMESTAMP);
         String message = (String) entity.getProperty(Comment.CONTENT);
+        message = translateMessage(languageCode, message);
         String userId = (String) entity.getProperty(Comment.USER_ID);
         double sentimentScore = (double) entity.getProperty(Comment.SENTIMENT_SCORE);
 
@@ -88,7 +95,8 @@ public class DataServlet extends HttpServlet {
         comments.add(comment);
     }
 
-    response.setContentType("application/json;");
+    response.setContentType("application/json; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
 
     UserService userService = UserServiceFactory.getUserService();
     User currentUser = userService.getCurrentUser();
@@ -192,5 +200,13 @@ public class DataServlet extends HttpServlet {
       double score = sentiment.getScore();
       languageService.close();
       return score;
+  }
+
+  private String translateMessage(String languageCode, String message) throws IOException {
+        Translate translate = TranslateOptions.getDefaultInstance().getService();
+        Translation translation =
+            translate.translate(message, Translate.TranslateOption.targetLanguage(languageCode));
+        String translatedText = translation.getTranslatedText();
+        return translatedText;
   }
 }

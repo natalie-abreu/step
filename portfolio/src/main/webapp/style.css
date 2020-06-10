@@ -32,7 +32,7 @@ h1  {
     justify-content: flex-start;
     position: relative;
     top: 40px;
-    
+    width: 80%;
 }
 
 .tab {
@@ -252,7 +252,7 @@ body {
     margin-top: 15px;
 }
 
-#max-selection, #sort-comments-selection {
+#max-selection, #sort-comments-selection, #language-selection {
     border: 2px #404E4D;
     background: #EBF6FF;
     color: #404E4D;
@@ -365,4 +365,8 @@ a {
     /* border: thin solid black; */
     height: 500px;
     width: 500px;
+}
+
+#language-selection {
+    float: right;
 }

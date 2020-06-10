@@ -144,14 +144,15 @@ function toggleProjectOff(id) {
 }
 
 let page_num = 1;
-async function getComments(pageInc=0, numComments=0, sortBy="") {
+async function getComments(pageInc=0, numComments=0, sortBy="", lang="") {
     console.log(sortBy);
     await checkLoginStatus();
     numComments = restoreNumComments(numComments);
     sortBy = restoreSort(sortBy);
+    lang = restoreLanguage(lang);
     page_num+=pageInc;
     if (page_num == 0) page_num=1;
-    const response = await fetch(`/data?max=${numComments}&page=${page_num}&sort=${sortBy}`);
+    const response = await fetch(`/data?max=${numComments}&page=${page_num}&sort=${sortBy}&lang=${lang}`);
     // will catch case when page is out of bounds
     let result;
     try {
@@ -166,6 +167,7 @@ async function getComments(pageInc=0, numComments=0, sortBy="") {
     board.innerText = '';
     for (msg of result["comments"]) {
         board.appendChild(createComment(result["user"], msg));
+        console.log(msg);
     }
     return 0;
 }
@@ -332,6 +334,29 @@ function getSortFromStorage(sortBy) {
         sessionStorage.sortBy = sortBy;
     }
     return sortBy;
+}
+
+function restoreLanguage(language) {
+    // prevent resetting of dropdown selection on refresh/submit
+    let languageSelection = document.getElementById("language-selection");
+    language = getLanguageFromStorage(language);
+    languageSelection.value = language;
+    return language;
+}
+
+
+function getLanguageFromStorage(language) {
+    if (language == "") {
+        if (!sessionStorage.language) {
+            language = "en";
+            sessionStorage.language = language;
+        }
+        else language = sessionStorage.language;
+    }
+    else {
+        sessionStorage.language = language;
+    }
+    return language;
 }
 
 function setCommentBoardSize(numComments) {
