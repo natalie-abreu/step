@@ -483,7 +483,6 @@ function addMarker(title, loc, content) {
         content: content
     });  
     marker.addListener('click', function() {
-        console.log(marker.getPosition());
         map.setZoom(20);
         map.setCenter(marker.getPosition());
         infowindow.open(map, marker);
