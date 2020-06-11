@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.LanguageServiceClient;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.google.cloud.translate.TranslateException;
 
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
@@ -59,6 +61,7 @@ public class DataServlet extends HttpServlet {
   static String LANGUAGE_PARAM = "lang";
   static String COMMENT_NUM = "CommentNum";
   static String COMMENT_NUM_VALUE = "value";
+  List<String> LANGUAGE_CODES = Arrays.asList("en", "es", "zh", "hi", "ar", "fr");
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -66,6 +69,8 @@ public class DataServlet extends HttpServlet {
     int pageNum = Integer.parseInt(request.getParameter(PAGE_NUM_PARAM));
     String sortBy = request.getParameter(SORT_BY_PARAM);
     String languageCode = request.getParameter(LANGUAGE_PARAM);
+    if (!LANGUAGE_CODES.contains(languageCode)) languageCode = "en";
+    
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(pageSize).offset(pageSize*(pageNum-1));
     Query query = new Query(Comment.DATA_TYPE).addSort(sortBy, SortDirection.DESCENDING);
@@ -204,8 +209,12 @@ public class DataServlet extends HttpServlet {
 
   private String translateMessage(String languageCode, String message) throws IOException {
         Translate translate = TranslateOptions.getDefaultInstance().getService();
-        Translation translation =
-            translate.translate(message, Translate.TranslateOption.targetLanguage(languageCode));
+        Translation translation;
+        try {
+            translation = translate.translate(message, Translate.TranslateOption.targetLanguage(languageCode));
+        } catch (TranslateException e) {
+            translation = translate.translate(message, Translate.TranslateOption.targetLanguage("en"));
+        }
         String translatedText = translation.getTranslatedText();
         return translatedText;
   }
