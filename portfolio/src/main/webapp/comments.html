@@ -46,6 +46,14 @@
                         <option value="timestamp">Most Recent</option>
                         <option value="sentiment_score">Most Positive</option>
                     </select>
+                    <select class="button" name="language" id="language-selection" onchange="getComments(pageInc=0, numComments=0, sortBy='', lang=this.value)">
+                        <option value="en">English</option>
+                        <option value="zh">Chinese</option>
+                        <option value="es">Spanish</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ar">Arabic</option>
+                        <option value="fr">French</option>
+                    </select>
                     <div id="comments-board">
                     </div>
                     <button id="prev-comments" class="comments-page-inc" type="button" onclick="getComments(pageInc=-1)">Prev Page</button>
