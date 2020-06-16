@@ -20,118 +20,69 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Collections;
+import java.util.Comparator;
 
 public final class FindMeetingQuery {
 
-// // MANDATORY ONLY
-//   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-//     ArrayList<TimeRange> result = new ArrayList<TimeRange>();
-//     // if request duration exceeds a day, return empty list
-//     if (TimeRange.WHOLE_DAY.duration() >= request.getDuration()) result.add(TimeRange.WHOLE_DAY);
-//     else return result;
-//     for (Event event : events) {
-//         ListIterator<TimeRange> it = result.listIterator();
-//         while (it.hasNext()) {
-//             TimeRange timerange = it.next();
-//             if (timerange.overlaps(event.getWhen())) {
-//                 // checks if overlap in attendees
-//                 for (String attendee : event.getAttendees()) {
-//                     if (request.getAttendees().contains(attendee)) {
-//                         // current timerange needs to be split or shortened
-//                         it.remove();
-//                         // event starts before or at same time as timerange gives value <= 0
-//                        int eventStartsBefore = TimeRange.ORDER_BY_START.compare(event.getWhen(), timerange);
-//                        int eventEndsBefore = TimeRange.ORDER_BY_END.compare(event.getWhen(), timerange);
-//                         if (eventStartsBefore <= 0 && eventEndsBefore <= 0) {
-//                             // xxxx          ==>    xxxx
-//                             //   -----       ==>        ---
-//                             TimeRange newTimeRange = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
-//                             if (newTimeRange.duration() >= request.getDuration()) it.add(newTimeRange);
-//                         }
-//                         else if (eventStartsBefore > 0 && eventEndsBefore <= 0) {
-//                             //     xxx       ==>      xxx
-//                             //  ---------    ==>    --   ---
-//                             TimeRange newTimeRange1 = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
-//                             TimeRange newTimeRange2 = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
-//                             if (newTimeRange1.duration() >= request.getDuration()) it.add(newTimeRange1);
-//                             if (newTimeRange2.duration() >= request.getDuration()) it.add(newTimeRange2);
-//                         }
-//                         else if (eventStartsBefore > 0 && eventEndsBefore > 0) {
-//                             //     xxxx      ==>       xxxx
-//                             // -----         ==>    ---
-//                             TimeRange newTimeRange = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
-//                             if (newTimeRange.duration() >= request.getDuration()) it.add(newTimeRange); 
-//                         }
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return result;
-//   }
-
-// // MANDATORY + ALL/NO OPTIONAL
-
-//   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-//     ArrayList<TimeRange> result = new ArrayList<TimeRange>();
-//     // if request duration exceeds a day, return empty list
-//     if (TimeRange.WHOLE_DAY.duration() >= request.getDuration()) result.add(TimeRange.WHOLE_DAY);
-//     else return result;
-//     result = queryHelper(events, request.getAttendees(), request.getDuration(), result);
-//     ArrayList<TimeRange> resultWithOptional = queryHelper(events, request.getOptionalAttendees(), request.getDuration(), result);
-//     if (resultWithOptional.isEmpty()) return result;
-//     else return resultWithOptional;
-//   }
-//   public ArrayList<TimeRange> queryHelper(Collection<Event> events, Collection<String> attendees, long duration, ArrayList<TimeRange> currentTimeRanges) {
-//       ArrayList<TimeRange> result = (ArrayList) currentTimeRanges.clone();
-//       for (Event event : events) {
-//         ListIterator<TimeRange> it = result.listIterator();
-//         while (it.hasNext()) {
-//             TimeRange timerange = it.next();
-//             if (timerange.overlaps(event.getWhen())) {
-//                 // checks if overlap in attendees
-//                 for (String attendee : event.getAttendees()) {
-//                     if (attendees.contains(attendee)) {
-//                         // current timerange needs to be split or shortened
-//                         updateResults(event, timerange, it, duration);
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return result;
-//   }
-
 // MANDATORY + MAX OPTIONAL
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-      ArrayList<TimeRange> result = new ArrayList<TimeRange>();
+    TimeRange possibleTimeRange;
+    ArrayList<TimeRange> result = new ArrayList<TimeRange>();
     // if request duration exceeds a day, return empty list
-    if (TimeRange.WHOLE_DAY.duration() >= request.getDuration()) result.add(TimeRange.WHOLE_DAY);
+    if (TimeRange.WHOLE_DAY.duration() >= request.getDuration()) possibleTimeRange = TimeRange.WHOLE_DAY;
     else return result;
-    // first find time slots that fulfill mandatory attendance
-    for (Event event : events) {
-        ListIterator<TimeRange> it = result.listIterator();
-        while (it.hasNext()) {
-            TimeRange timerange = it.next();
-            if (timerange.overlaps(event.getWhen())) {
-                // checks if overlap in attendees
-                for (String attendee : event.getAttendees()) {
-                    if (request.getAttendees().contains(attendee)) {
-                        updateResults(event, timerange, it, request.getDuration());
-                        break;
-                    }
+
+    // sort events by start time
+    ArrayList<Event> eventsList = new ArrayList<Event>(events);
+    Collections.sort(eventsList, ORDER_BY_START);
+
+    for (Event event : eventsList) {
+        if (possibleTimeRange.overlaps(event.getWhen())) {
+            // checks if overlap in attendees
+            for (String attendee : event.getAttendees()) {
+                if (request.getAttendees().contains(attendee)) {
+                    possibleTimeRange = updateResults(event, possibleTimeRange, result, request.getDuration());
+                    break;
                 }
             }
         }
+        if (possibleTimeRange == null) break;
     }
+    if (possibleTimeRange != null) result.add(possibleTimeRange);
     // return timeslots that maximize number of optional attendees that can attend
     return maximizeAttendance(result, request, events);
   }
-  
 
-  public void updateResults(Event event, TimeRange timerange, ListIterator<TimeRange> it, long duration) {
+  public TimeRange updateResults(Event event, TimeRange timerange, ArrayList<TimeRange> result, long duration) {
+      // event starts before or at same time as timerange gives value <= 0
+      boolean eventStartsBefore = event.getWhen().start() <= timerange.start();
+      boolean eventEndsBefore = event.getWhen().end() <= timerange.end();
+      if (eventStartsBefore && eventEndsBefore) {
+          // xxxx          ==>    xxxx
+          //   -----       ==>        ---
+          TimeRange newTimeRange = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
+          if (newTimeRange.duration() >= duration) return newTimeRange;
+      }
+      else if (!eventStartsBefore && eventEndsBefore) {
+          //     xxx       ==>      xxx
+          //  ---------    ==>    --   ---
+          TimeRange timeRangeBeforeEvent = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
+          TimeRange timeRangeAfterEvent = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
+          if (timeRangeBeforeEvent.duration() >= duration) result.add(timeRangeBeforeEvent);
+          if (timeRangeAfterEvent.duration() >= duration) return timeRangeAfterEvent;
+          
+      }
+      else if (!eventStartsBefore && !eventEndsBefore) {
+          //     xxxx      ==>       xxxx
+          // -----         ==>    ---
+          TimeRange newTimeRange = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
+          if (newTimeRange.duration() >= duration) result.add(newTimeRange); 
+      }
+      // update does not create new possible timerange, return null
+      return null;
+  }
+
+  public void updateOptionalResults(Event event, TimeRange timerange, ListIterator<TimeRange> it, long duration) {
       it.remove();
       // event starts before or at same time as timerange gives value <= 0
       int eventStartsBefore = TimeRange.ORDER_BY_START.compare(event.getWhen(), timerange);
@@ -185,7 +136,7 @@ public final class FindMeetingQuery {
                 if (timerange.overlaps(event.getWhen())) {
                     // checks if overlap in attendees
                     if (event.getAttendees().contains(optionalAttendees.get(idx))) {
-                        updateResults(event, timerange, it, duration);
+                        updateOptionalResults(event, timerange, it, duration);
                     }
                 }
             }
@@ -206,12 +157,23 @@ public final class FindMeetingQuery {
   }
 
   public void updateBestResults(ArrayList<TimeRange> bestResults, ArrayList<TimeRange> currentResults) {
-      for (TimeRange t : currentResults) {
-          if (!bestResults.contains(t)) {
-              bestResults.add(t);
-          }
+    for (TimeRange t : currentResults) {
+      if (!bestResults.contains(t)) {
+        bestResults.add(t);
       }
-      bestResults.removeIf(t -> !currentResults.contains(t));
+    }
+    bestResults.removeIf(t -> !currentResults.contains(t));
   }
+
+  /**
+   * A comparator for sorting events by their start time in ascending order.
+   * Should go in Event class but not sure I'm allowed to edit that.
+   */
+  public static final Comparator<Event> ORDER_BY_START = new Comparator<Event>() {
+    @Override
+    public int compare(Event a, Event b) {
+      return Long.compare(a.getWhen().start(), b.getWhen().start());
+    }
+  };
 
 }
