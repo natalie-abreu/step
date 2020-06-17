@@ -64,7 +64,6 @@ function queryServer(meetingRequest) {
         return response.json();
       })
       .then((timeRanges) => {
-          console.log(timeRanges);
         // Convert the range from a json representation to our TimeRange class.
         const out = [];
         timeRanges.forEach((range) => {
