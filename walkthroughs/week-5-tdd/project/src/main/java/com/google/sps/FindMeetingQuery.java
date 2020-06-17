@@ -82,33 +82,6 @@ public final class FindMeetingQuery {
       return null;
   }
 
-  public void updateOptionalResults(Event event, TimeRange timerange, ListIterator<TimeRange> it, long duration) {
-      it.remove();
-      // event starts before or at same time as timerange gives value <= 0
-      int eventStartsBefore = TimeRange.ORDER_BY_START.compare(event.getWhen(), timerange);
-      int eventEndsBefore = TimeRange.ORDER_BY_END.compare(event.getWhen(), timerange);
-      if (eventStartsBefore <= 0 && eventEndsBefore <= 0) {
-          // xxxx          ==>    xxxx
-          //   -----       ==>        ---
-          TimeRange newTimeRange = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
-          if (newTimeRange.duration() >= duration) it.add(newTimeRange);
-      }
-      else if (eventStartsBefore > 0 && eventEndsBefore <= 0) {
-          //     xxx       ==>      xxx
-          //  ---------    ==>    --   ---
-          TimeRange newTimeRange1 = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
-          TimeRange newTimeRange2 = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
-          if (newTimeRange1.duration() >= duration) it.add(newTimeRange1);
-          if (newTimeRange2.duration() >= duration) it.add(newTimeRange2);
-      }
-      else if (eventStartsBefore > 0 && eventEndsBefore > 0) {
-          //     xxxx      ==>       xxxx
-          // -----         ==>    ---
-          TimeRange newTimeRange = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
-          if (newTimeRange.duration() >= duration) it.add(newTimeRange); 
-      }
-  }
-
   public Collection<TimeRange> maximizeAttendance(ArrayList<TimeRange> mandatoryAttendeeResults, 
     MeetingRequest request, Collection<Event> events) {
         ArrayList<String> optionalAttendees = new ArrayList<>(request.getOptionalAttendees());
@@ -154,6 +127,33 @@ public final class FindMeetingQuery {
         }
         // try adding next optional attendee without including current attendee
         addAttendee(idx+1, events, duration, optionalAttendees, prevResults, currOptAttendees-1, bestResults, bestOptAttendees);
+  }
+
+  public void updateOptionalResults(Event event, TimeRange timerange, ListIterator<TimeRange> it, long duration) {
+      it.remove();
+      // event starts before or at same time as timerange gives value <= 0
+      int eventStartsBefore = TimeRange.ORDER_BY_START.compare(event.getWhen(), timerange);
+      int eventEndsBefore = TimeRange.ORDER_BY_END.compare(event.getWhen(), timerange);
+      if (eventStartsBefore <= 0 && eventEndsBefore <= 0) {
+          // xxxx          ==>    xxxx
+          //   -----       ==>        ---
+          TimeRange newTimeRange = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
+          if (newTimeRange.duration() >= duration) it.add(newTimeRange);
+      }
+      else if (eventStartsBefore > 0 && eventEndsBefore <= 0) {
+          //     xxx       ==>      xxx
+          //  ---------    ==>    --   ---
+          TimeRange newTimeRange1 = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
+          TimeRange newTimeRange2 = TimeRange.fromStartEnd(event.getWhen().end(), timerange.end(), false);
+          if (newTimeRange1.duration() >= duration) it.add(newTimeRange1);
+          if (newTimeRange2.duration() >= duration) it.add(newTimeRange2);
+      }
+      else if (eventStartsBefore > 0 && eventEndsBefore > 0) {
+          //     xxxx      ==>       xxxx
+          // -----         ==>    ---
+          TimeRange newTimeRange = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
+          if (newTimeRange.duration() >= duration) it.add(newTimeRange); 
+      }
   }
 
   public void updateBestResults(ArrayList<TimeRange> bestResults, ArrayList<TimeRange> currentResults) {
