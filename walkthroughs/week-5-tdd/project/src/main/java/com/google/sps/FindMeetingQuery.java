@@ -24,37 +24,50 @@ import java.util.Comparator;
 
 public final class FindMeetingQuery {
 
-// MANDATORY + MAX OPTIONAL
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     TimeRange possibleTimeRange;
     ArrayList<TimeRange> result = new ArrayList<TimeRange>();
-    // if request duration exceeds a day, return empty list
+
     if (TimeRange.WHOLE_DAY.duration() >= request.getDuration()) possibleTimeRange = TimeRange.WHOLE_DAY;
     else return result;
 
-    // sort events by start time
     ArrayList<Event> eventsList = new ArrayList<Event>(events);
     Collections.sort(eventsList, ORDER_BY_START);
 
+    // Loop through all scheduled events. If there is enough time
+    // between possibleTimeRange.start() and the beginning of the event under consideration,
+    // add that time span into results. At the end of each iteration, possibleTimeRange is
+    // updated to start at the end of the event under consideration.
+    // If the end of the event under consideration is past the end of possibleTimeRange,
+    // possibleTimeRange is set to null and no more events are considered.
+    // At the end of the loop, result contains a list of time ranges where it is possible
+    // to schedule a meeting.
     for (Event event : eventsList) {
         if (possibleTimeRange.overlaps(event.getWhen())) {
-            // checks if overlap in attendees
-            for (String attendee : event.getAttendees()) {
-                if (request.getAttendees().contains(attendee)) {
-                    possibleTimeRange = updateResults(event, possibleTimeRange, result, request.getDuration());
-                    break;
-                }
+            if (eventContainsMandatoryAttendee(event, request)) {
+                possibleTimeRange = updateResults(event, possibleTimeRange, result, request.getDuration());
             }
         }
         if (possibleTimeRange == null) break;
     }
     if (possibleTimeRange != null) result.add(possibleTimeRange);
-    // return timeslots that maximize number of optional attendees that can attend
+    // Return timeslots that maximize number of optional attendees that can attend
     return maximizeAttendance(result, request, events);
   }
 
+  public boolean eventContainsMandatoryAttendee(Event event, MeetingRequest request) {
+      for (String attendee : event.getAttendees()) {
+          if (request.getAttendees().contains(attendee)) return true;
+      }
+      return false;
+  }
+  
+  // Identifies how the given timerange needs to be modified given an overlapping event. Since events are processed
+  // from earliest to latest start time, any segmented timerange that ends earlier than the start of the event is
+  // guaranteed to not overlap with an unprocessed event so can be added to the result list. If the splitting/
+  // shortening of the given timerange produces a timerange starting after the end of the event, the function will
+  // return that timerange to be processed in the next iteration.
   public TimeRange updateResults(Event event, TimeRange timerange, ArrayList<TimeRange> result, long duration) {
-      // event starts before or at same time as timerange gives value <= 0
       boolean eventStartsBefore = event.getWhen().start() <= timerange.start();
       boolean eventEndsBefore = event.getWhen().end() <= timerange.end();
       if (eventStartsBefore && eventEndsBefore) {
@@ -78,16 +91,18 @@ public final class FindMeetingQuery {
           TimeRange newTimeRange = TimeRange.fromStartEnd(timerange.start(), event.getWhen().start(), false);
           if (newTimeRange.duration() >= duration) result.add(newTimeRange); 
       }
-      // update does not create new possible timerange, return null
+      // Update does not create new possible timerange, return null
       return null;
   }
 
+  // Finds timeranges that maximize attendance of requested optional attendees. Calls recursive function
+  // addAttendee() to try all combinations of optional attendees.
   public Collection<TimeRange> maximizeAttendance(ArrayList<TimeRange> mandatoryAttendeeResults, 
     MeetingRequest request, Collection<Event> events) {
         ArrayList<String> optionalAttendees = new ArrayList<>(request.getOptionalAttendees());
         ArrayList<TimeRange> currentResults = (ArrayList) mandatoryAttendeeResults.clone();
         ArrayList<TimeRange> bestResults = (ArrayList) mandatoryAttendeeResults.clone();
-        // wrap in array so can pass by reference
+        // Wrap in array so can pass by reference
         int[] bestNum = { 0 };
         addAttendee(0, events, request.getDuration(), optionalAttendees, currentResults, 0, bestResults, bestNum);
         Collections.sort(bestResults, TimeRange.ORDER_BY_START);
@@ -100,14 +115,12 @@ public final class FindMeetingQuery {
         if (idx >= optionalAttendees.size()) {
             return;
         }
-        // save non-updated results before changing list
         ArrayList<TimeRange> prevResults = (ArrayList) currentResults.clone();
         for (Event event : events) {
             ListIterator<TimeRange> it = currentResults.listIterator();
             while (it.hasNext()) {
                 TimeRange timerange = it.next();
                 if (timerange.overlaps(event.getWhen())) {
-                    // checks if overlap in attendees
                     if (event.getAttendees().contains(optionalAttendees.get(idx))) {
                         updateOptionalResults(event, timerange, it, duration);
                     }
@@ -116,10 +129,8 @@ public final class FindMeetingQuery {
         }
         currOptAttendees++;
         if (!currentResults.isEmpty()) {  
-            // check if current solution exceeds best
             if (currOptAttendees > bestOptAttendees[0]) {
                 bestOptAttendees[0] = currOptAttendees;
-                // update best results list in place
                 updateBestResults(bestResults, currentResults);
             }
             // try adding next optional attendee including current attendee
@@ -157,12 +168,8 @@ public final class FindMeetingQuery {
   }
 
   public void updateBestResults(ArrayList<TimeRange> bestResults, ArrayList<TimeRange> currentResults) {
-    for (TimeRange t : currentResults) {
-      if (!bestResults.contains(t)) {
-        bestResults.add(t);
-      }
-    }
-    bestResults.removeIf(t -> !currentResults.contains(t));
+      bestResults.clear();
+	  for (TimeRange tr: currentResults) { bestResults.add(tr); }
   }
 
   /**
